@@ -28,7 +28,7 @@ class AgentCommunicationTools : ToolSet{
                 contentType = MediaType.APPLICATION_JSON
             }
             val serverURL = dotenv["SPRING_SERVER_URL"]
-            val requestBody = mapOf("message" to message)
+            val requestBody = mapOf("sender" to this.name,"message" to message)
             val request = HttpEntity(requestBody, headers)
 
             val response = restTemplate.postForObject(serverURL+agentEndpoint, request, String::class.java )
