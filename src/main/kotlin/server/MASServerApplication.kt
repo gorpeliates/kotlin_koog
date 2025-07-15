@@ -4,9 +4,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 
 @SpringBootApplication
-class A2AServerApplication
+class MASServerApplication
 
     fun main(args: Array<String>) {
-        runApplication<A2AServerApplication>(*args)
+        runApplication<MASServerApplication>(*args)
     }
 
