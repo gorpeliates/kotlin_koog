@@ -24,8 +24,11 @@ import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
 @OptIn(ExperimentalUuidApi::class)
-class ProjectManager(val name: String,port: Int) {
-
+class ProjectManager(
+    val name: String,
+    val port: Int,
+    val systemPrompt:String = "You are a project manager. You should break down the tasks given the product design."
+) {
 
     override fun toString(): String {
         return "ProductManager(name='$name')"
@@ -82,7 +85,7 @@ class ProjectManager(val name: String,port: Int) {
 
     val aiAgentConfig = AIAgentConfig(
         prompt = prompt("test") {
-            system("You are a project manager. You should break down the tasks given the product design." )
+            system(systemPrompt )
         },
         model = LLModel(
             provider = LLMProvider.OpenRouter,

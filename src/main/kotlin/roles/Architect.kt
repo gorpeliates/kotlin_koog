@@ -24,7 +24,11 @@ import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
 @OptIn(ExperimentalUuidApi::class)
-class Architect(val name: String,port: Int) : Employee(name) {
+class Architect(
+    val name: String,
+    val port: Int,
+    var systemPrompt:String = "You are an architect. Your mission is to design a software given the requirements"
+) : Employee(name) {
 
 
     override fun toString(): String {
@@ -83,7 +87,7 @@ class Architect(val name: String,port: Int) : Employee(name) {
 
     val aiAgentConfig = AIAgentConfig(
         prompt = prompt("test") {
-            system("You are an architect. Your mission is to design a software given the requirements" )
+            system(systemPrompt )
         },
         model = LLModel(
             provider = LLMProvider.OpenRouter,

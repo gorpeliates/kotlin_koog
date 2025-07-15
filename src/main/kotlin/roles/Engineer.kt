@@ -24,7 +24,13 @@ import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
 @OptIn(ExperimentalUuidApi::class)
-class Engineer(val name: String, val task: String,port: Int) {
+class Engineer(val name: String,
+               val task: String,
+               val port: Int,
+    val systemPrompt: String =
+        "You are a software engineer in a software company. You will be given a task to complete. \n" +
+            " You will use the tools and can communicate with other people in the company to complete the task.",
+) {
 
 
     override fun toString(): String {
@@ -83,8 +89,7 @@ class Engineer(val name: String, val task: String,port: Int) {
 
     val aiAgentConfig = AIAgentConfig(
         prompt = prompt("test") {
-            system("You are a software engineer in a software company. You will be given a task to complete"
-                    + ". You will use the tools and can communicate with other people in the company to complete the task.")
+            system(systemPrompt)
         },
         model = LLModel(
             provider = LLMProvider.OpenRouter,
