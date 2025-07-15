@@ -1,4 +1,4 @@
-package server.roles
+package roles
 
 import ai.koog.agents.core.agent.AIAgent
 import ai.koog.agents.core.agent.config.AIAgentConfig
@@ -18,14 +18,13 @@ import ai.koog.prompt.executor.model.PromptExecutor
 import ai.koog.prompt.llm.LLMCapability
 import ai.koog.prompt.llm.LLMProvider
 import ai.koog.prompt.llm.LLModel
+import io.github.cdimascio.dotenv.dotenv
 import tools.AgentCommunicationTools
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
 @OptIn(ExperimentalUuidApi::class)
-class ProjectManager(name : String) {
-
-    val name: String = name
+class ProjectManager(val name: String,port: Int) {
 
 
     override fun toString(): String {
@@ -33,8 +32,7 @@ class ProjectManager(name : String) {
     }
 
 
-
-    val executor: PromptExecutor = simpleOpenRouterExecutor("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")
+    val executor: PromptExecutor = simpleOpenRouterExecutor(dotenv()["OPEN_ROUTER_API_KEY"])
 
     val toolRegistry = ToolRegistry {
         // Special tool, required with this type of agent.

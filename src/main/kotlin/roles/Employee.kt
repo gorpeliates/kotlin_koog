@@ -1,4 +1,4 @@
-package server.roles
+package roles
 
 open class Employee(name : String) {
 }

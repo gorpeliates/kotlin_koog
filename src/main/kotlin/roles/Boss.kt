@@ -1,13 +1,9 @@
-package server.roles
+package roles
 
 import ai.koog.agents.core.agent.AIAgent
 
-class Boss(name: String, request: String, agent: AIAgent) {
+class Boss(val name: String, val request: String, val agent: AIAgent) {
 
-
-    val name: String = name
-    val request: String = request
-    val agent: AIAgent = agent
 
     override fun toString(): String {
         return "Boss(name='$name', request='$request', agent=$agent)"
