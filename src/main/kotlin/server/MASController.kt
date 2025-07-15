@@ -1,16 +1,18 @@
 package server
 
+import io.a2a.spec.AgentCard
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
-import roles.Architect
+import org.springframework.web.bind.annotation.ResponseBody
+import roles.AgentCardFactory
 
 @Controller
 class MASController {
 
-    @PostMapping("/sendmessage/{agentId}")
+        @PostMapping("/sendmessage/{agentId}")
     fun sendMessage(
         @PathVariable("agentId") message: String,
         @RequestBody body: Map<String, String>
@@ -19,9 +21,9 @@ class MASController {
     }
 
     @GetMapping("/.well-known")
-    fun agentCards(){
-
-
+    @ResponseBody
+    fun agentCards() : List<AgentCard> {
+        return AgentCardFactory().getAllAgentCards()
     }
 
 }
