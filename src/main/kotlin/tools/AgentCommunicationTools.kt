@@ -27,11 +27,11 @@ class AgentCommunicationTools : ToolSet{
             val headers = HttpHeaders().apply {
                 contentType = MediaType.APPLICATION_JSON
             }
-
+            val serverURL = dotenv["SPRING_SERVER_URL"]
             val requestBody = mapOf("message" to message)
             val request = HttpEntity(requestBody, headers)
 
-            val response = restTemplate.postForObject(agentEndpoint, request, String::class.java)
+            val response = restTemplate.postForObject(serverURL+agentEndpoint, request, String::class.java )
             response ?: "No response received"
         } catch (e: Exception) {
             "Error sending message: ${e.message}"
