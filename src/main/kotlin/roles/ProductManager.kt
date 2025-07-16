@@ -19,6 +19,7 @@ import ai.koog.prompt.llm.LLMCapability
 import ai.koog.prompt.llm.LLMProvider
 import ai.koog.prompt.llm.LLModel
 import io.github.cdimascio.dotenv.dotenv
+import kotlinx.coroutines.runBlocking
 import tools.AgentCommunicationTools
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
@@ -26,10 +27,9 @@ import kotlin.uuid.Uuid
 @OptIn(ExperimentalUuidApi::class)
 class ProductManager(
     val name: String,
-    val port: Int,
     val systemPrompt : String = "You are a product manager. You have two main goals: 1) to prepare a document of requirements" +
         " for the product, 2) to make market research. "
-) {
+) : MASAIAgent {
 
 
     override fun toString(): String {
@@ -100,7 +100,7 @@ class ProductManager(
         maxAgentIterations = 10
     )
 
-    val agent = AIAgent(
+    override val agent = AIAgent(
         promptExecutor = executor,
         strategy = strategy,
         agentConfig = aiAgentConfig,
@@ -121,4 +121,13 @@ class ProductManager(
             }
         }
     }
+    override fun runAgent(msg:String): String {
+
+        var response = ""
+        runBlocking {
+            response = agent.runAndGetResult(msg).toString()
+        }
+        return response
+    }
+
 }

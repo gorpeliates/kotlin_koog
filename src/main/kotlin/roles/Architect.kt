@@ -20,6 +20,7 @@ import ai.koog.prompt.llm.LLMCapability
 import ai.koog.prompt.llm.LLMProvider
 import ai.koog.prompt.llm.LLModel
 import io.github.cdimascio.dotenv.dotenv
+import kotlinx.coroutines.runBlocking
 import tools.AgentCommunicationTools
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
@@ -27,9 +28,8 @@ import kotlin.uuid.Uuid
 @OptIn(ExperimentalUuidApi::class)
 class Architect(
     val name: String,
-    val port: Int,
     var systemPrompt:String = "You are an architect. Your mission is to design a software given the requirements"
-) : Employee(name) {
+) : MASAIAgent {
 
 
     override fun toString(): String {
@@ -100,7 +100,7 @@ class Architect(
         maxAgentIterations = 10
     )
 
-    val agent = AIAgent(
+    override val agent = AIAgent(
         promptExecutor = executor,
         strategy = strategy,
         agentConfig = aiAgentConfig,
@@ -120,5 +120,13 @@ class Architect(
                 println("Result: $result")
             }
         }
+    }
+    override fun runAgent(msg:String): String {
+
+        var response = ""
+        runBlocking {
+            response = agent.runAndGetResult(msg).toString()
+        }
+        return response
     }
 }

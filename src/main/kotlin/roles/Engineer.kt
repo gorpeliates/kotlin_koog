@@ -22,21 +22,21 @@ import ai.koog.prompt.llm.LLModel
 import ai.koog.prompt.llm.OllamaModels
 import ai.koog.prompt.params.LLMParams
 import io.github.cdimascio.dotenv.dotenv
+import kotlinx.coroutines.runBlocking
 import tools.AgentCommunicationTools
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
 @OptIn(ExperimentalUuidApi::class)
 class Engineer(val name: String,
-               val task: String,
                 val systemPrompt: String =
                     "You are a software engineer in a software company. You will be given a task to complete. \n" +
                     " You will use the tools and can communicate with other people in the company to complete the task.",
-) {
+) : MASAIAgent{
     private val MAX_TOKENS_THRESHOLD = 1000
 
     override fun toString(): String {
-        return "Engineer(name='$name', task='$task')"
+        return "Engineer(name='$name')"
     }
 
 
@@ -88,14 +88,14 @@ class Engineer(val name: String,
 
     val aiAgentConfig = AIAgentConfig(
         prompt = prompt("test", LLMParams(temperature = 0.0)) {
-            system("You are a software engineer. You write code based on the requirements you get from others")
+            system(systemPrompt)
         },
         model = OllamaModels.Meta.LLAMA_3_2_3B,
         maxAgentIterations = 50
     )
 
 
-    val agent = AIAgent(
+    override val agent = AIAgent(
         promptExecutor = executor,
         strategy = strategy,
         agentConfig = aiAgentConfig,
@@ -119,6 +119,16 @@ class Engineer(val name: String,
             }
         }
     }
+
+    override fun runAgent(msg:String): String {
+
+        var response = ""
+        runBlocking {
+            response = agent.runAndGetResult(msg).toString()
+        }
+        return response
+    }
+
 
 
 }

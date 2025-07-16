@@ -19,6 +19,7 @@ import ai.koog.prompt.llm.LLMCapability
 import ai.koog.prompt.llm.LLMProvider
 import ai.koog.prompt.llm.LLModel
 import io.github.cdimascio.dotenv.dotenv
+import kotlinx.coroutines.runBlocking
 import tools.AgentCommunicationTools
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
@@ -26,9 +27,8 @@ import kotlin.uuid.Uuid
 @OptIn(ExperimentalUuidApi::class)
 class ProjectManager(
     val name: String,
-    val port: Int,
     val systemPrompt:String = "You are a project manager. You should break down the tasks given the product design."
-) {
+) : MASAIAgent{
 
     override fun toString(): String {
         return "ProductManager(name='$name')"
@@ -97,7 +97,7 @@ class ProjectManager(
         maxAgentIterations = 10
     )
 
-    val agent = AIAgent(
+    override val agent = AIAgent(
         promptExecutor = executor,
         strategy = strategy,
         agentConfig = aiAgentConfig,
@@ -119,7 +119,13 @@ class ProjectManager(
         }
     }
 
-    suspend fun execute_prompt(prompt: String): String? {
-        return agent.runAndGetResult(prompt)
+    override fun runAgent(msg:String): String {
+
+        var response = ""
+        runBlocking {
+            response = agent.runAndGetResult(msg).toString()
+        }
+        return response
     }
+
 }

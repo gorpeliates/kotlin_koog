@@ -4,17 +4,25 @@ import io.a2a.server.PublicAgentCard
 import io.a2a.spec.AgentCapabilities
 import io.a2a.spec.AgentCard
 import io.a2a.spec.AgentSkill
+import io.github.cdimascio.dotenv.dotenv
+import jakarta.inject.Singleton
 import org.springframework.stereotype.Component
 
+@Singleton
 @Component
-class AgentCardFactory {
-
+class AgentServer {
+    private val SERVER_URL = dotenv()["SPRING_SERVER_URL"]
+    private val id_to_agents : Map<Int, MASAIAgent> = mapOf(
+        10001 to Engineer("Engineer agent"),
+        10004 to ProductManager("ProductManager agent"),
+        10007 to ProjectManager("ProjectManager agent")
+    )
     @PublicAgentCard
     fun engineerAgentCard(): AgentCard {
         return AgentCard.Builder()
             .name("Engineer Agent")
             .description("Responsible for writing code ")
-            .url("http://localhost:10001")
+            .url("http://localhost:$SERVER_URL/sendmessage/10001")
             .version("1.0.0")
             .capabilities(
                 AgentCapabilities.Builder()
@@ -42,7 +50,7 @@ class AgentCardFactory {
         return AgentCard.Builder()
             .name("Product Manager Agent")
             .description("Responsible for product strategy and roadmap planning")
-            .url("http://localhost:10004")
+            .url("http://localhost:$SERVER_URL/sendmessage/10004")
             .version("1.0.0")
             .capabilities(
                 AgentCapabilities.Builder()
@@ -76,7 +84,7 @@ class AgentCardFactory {
         return AgentCard.Builder()
             .name("Project Manager Agent")
             .description("Responsible for project coordination and team management")
-            .url("http://localhost:10005")
+            .url("http://localhost:$SERVER_URL/sendmessage/10007")
             .version("1.0.0")
             .capabilities(
                 AgentCapabilities.Builder()
@@ -113,5 +121,10 @@ class AgentCardFactory {
             projectManagerAgentCard()
         )
     }
+
+    fun getAgent(agentId: Int) : MASAIAgent{
+        return id_to_agents[agentId]!!
+    }
+
 
 }
