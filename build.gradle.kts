@@ -41,16 +41,12 @@ dependencies {
     implementation("io.github.a2asdk:a2a-java-sdk-client:${a2aSdkVersion}")
     implementation("io.github.a2asdk:a2a-java-sdk-server-common:${a2aSdkVersion}")
 
-
     // Koog dependencies
     implementation("ai.koog:koog-agents:0.2.1")
     implementation("ch.qos.logback:logback-classic:1.5.13")
 
-    implementation("io.opentelemetry:opentelemetry-api:1.36.0")
-    implementation("io.opentelemetry:opentelemetry-sdk:1.36.0")
-    implementation("io.opentelemetry:opentelemetry-sdk-logs:1.36.0")
-    implementation("io.opentelemetry:opentelemetry-exporter-logging:1.36.0")
-    implementation("io.opentelemetry:opentelemetry-exporter-common:1.36.0")
+    implementation("io.micrometer:micrometer-tracing-bridge-otel:1.5.1")
+    implementation("io.opentelemetry:opentelemetry-exporter-otlp:1.36.0")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
 
     testImplementation(kotlin("test"))

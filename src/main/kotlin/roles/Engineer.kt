@@ -14,11 +14,7 @@ import ai.koog.agents.ext.tool.SayToUser
 import ai.koog.agents.features.eventHandler.feature.handleEvents
 import ai.koog.prompt.dsl.prompt
 import ai.koog.prompt.executor.llms.all.simpleOllamaAIExecutor
-import ai.koog.prompt.executor.llms.all.simpleOpenRouterExecutor
 import ai.koog.prompt.executor.model.PromptExecutor
-import ai.koog.prompt.llm.LLMCapability
-import ai.koog.prompt.llm.LLMProvider
-import ai.koog.prompt.llm.LLModel
 import ai.koog.prompt.llm.OllamaModels
 import ai.koog.prompt.params.LLMParams
 import io.github.cdimascio.dotenv.dotenv
@@ -79,6 +75,9 @@ class Engineer(val name: String,
             (nodeExecuteToolMultiple forwardTo nodeSendToolResultMultiple)
                     onCondition { llm.readSession { prompt.latestTokenUsage <= MAX_TOKENS_THRESHOLD } }
         )
+        edge((nodeSendToolResultMultiple forwardTo nodeExecuteToolMultiple)
+                onMultipleToolCalls  {true}
+        )
 
         edge(
             (nodeSendToolResultMultiple forwardTo nodeFinish)
@@ -108,7 +107,7 @@ class Engineer(val name: String,
             }
             onAgentRunError {
                     strategyName: String, sessionUuid: Uuid?, throwable: Throwable ->
-                println("ERROR START")
+                println("ERROR")
                 println(throwable.cause.toString())
                 println(throwable.message.toString())
                 println(throwable.stackTraceToString())

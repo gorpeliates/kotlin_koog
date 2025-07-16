@@ -1,4 +1,4 @@
-package roles
+package server
 
 import io.a2a.server.PublicAgentCard
 import io.a2a.spec.AgentCapabilities
@@ -7,6 +7,10 @@ import io.a2a.spec.AgentSkill
 import io.github.cdimascio.dotenv.dotenv
 import jakarta.inject.Singleton
 import org.springframework.stereotype.Component
+import roles.Engineer
+import roles.MASAIAgent
+import roles.ProductManager
+import roles.ProjectManager
 
 @Singleton
 @Component
@@ -122,7 +126,7 @@ class AgentServer {
         )
     }
 
-    fun getAgent(agentId: Int) : MASAIAgent{
+    fun getAgent(agentId: Int) : MASAIAgent {
         return id_to_agents[agentId]!!
     }
 
