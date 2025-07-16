@@ -27,7 +27,8 @@ import kotlin.uuid.Uuid
 class Engineer(val name: String,
                 val systemPrompt: String =
                     "You are a software engineer in a software company. You will be given a task to complete. \n" +
-                    " You will use the tools and can communicate with other people in the company to complete the task.",
+                            "You can access what each other agent does by using the getAgentDetails tool." +
+                            "You can ask questions to these agents to write the code, if you need additional information to do so.",
 ) : MASAIAgent{
     private val MAX_TOKENS_THRESHOLD = 1000
 
