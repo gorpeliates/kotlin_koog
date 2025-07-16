@@ -8,6 +8,7 @@ import org.springframework.web.client.RestTemplate
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
+import org.springframework.web.client.getForEntity
 
 @Suppress("unused")
 @LLMDescription("Tools for communicating with other agents through their API endpoints.")
@@ -41,19 +42,14 @@ class AgentCommunicationTools : ToolSet{
 
     @Tool
     @LLMDescription("Get the details of all the agents from their agent cards.")
-    fun getAgentDetails(): String{
+    fun getAgentDetails() : String{
         return try {
-            val headers = HttpHeaders().apply {
-                contentType = MediaType.APPLICATION_JSON
-            }
-            val requestBody = mapOf("sender" to this.name)
-            val request = HttpEntity(requestBody, headers)
-            val response = restTemplate.getForObject("$serverURL./well-known", String::class.java ,request)
-            response ?: "No response received"
 
-        }
-        catch (e: Exception) {
-            "Error retrieving agent cards: ${e.message}"
-        }
+            val endpoint = "$serverURL/.well-known"
+            val response = restTemplate.getForObject(endpoint, String::class.java)
+            response
+        } catch (e: Exception) {
+            println("Error retrieving agent cards: ${e.message}")
+        } as String
     }
 }

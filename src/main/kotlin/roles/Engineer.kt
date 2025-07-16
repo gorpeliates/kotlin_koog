@@ -40,8 +40,7 @@ class Engineer(val name: String,
     }
 
 
-//    val executor: PromptExecutor = simpleOpenRouterExecutor(dotenv()["OPEN_ROUTER_API_KEY"])
-    val executor: PromptExecutor = simpleOllamaAIExecutor("http://127.0.0.1:11434")
+    val executor: PromptExecutor = simpleOpenRouterExecutor(dotenv()["OPEN_ROUTER_API_KEY"])
 
     val toolRegistry = ToolRegistry {
         // Special tool, required with this type of agent.
@@ -83,32 +82,26 @@ class Engineer(val name: String,
 
         edge(
             (nodeSendToolResultMultiple forwardTo nodeFinish)
-                    transformed { it.first() }
+//                    transformed { it.first() }
                     onAssistantMessage { true }
         )
     }
 
 
-//    val aiAgentConfig = AIAgentConfig(
-//        prompt = prompt("test") {
-//            system(systemPrompt)
-//        },
-//        model = LLModel(
-//            provider = LLMProvider.OpenRouter,
-//            id = "meta-llama/llama-3.3-70b-instruct:free",
-//            capabilities = listOf(
-//                LLMCapability.Completion, LLMCapability.Tools,  LLMCapability.Embed,
-//                LLMCapability.PromptCaching)
-//        ),
-//        maxAgentIterations = 10
-//    )
     val aiAgentConfig = AIAgentConfig(
         prompt = prompt("test") {
             system(systemPrompt)
         },
-        model = OllamaModels.Alibaba.QWEN_CODER_2_5_32B,
+        model = LLModel(
+            provider = LLMProvider.OpenRouter,
+            id = "deepseek/deepseek-chat-v3-0324:free",
+            capabilities = listOf(
+                LLMCapability.Completion, LLMCapability.Tools,  LLMCapability.Embed,
+                LLMCapability.PromptCaching)
+        ),
         maxAgentIterations = 10
     )
+
 
 
     val agent = AIAgent(
@@ -124,7 +117,10 @@ class Engineer(val name: String,
             }
             onAgentRunError {
                     strategyName: String, sessionUuid: Uuid?, throwable: Throwable ->
-                println("Error in strategy $strategyName with session $sessionUuid: ${throwable.message}")
+                println("ERROR START")
+                println(throwable.cause.toString())
+                println(throwable.message.toString())
+                println(throwable.stackTraceToString())
             }
             onAgentFinished {
                     strategyName: String, result: String? ->

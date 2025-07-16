@@ -23,7 +23,9 @@ class MASController {
     @GetMapping("/.well-known")
     @ResponseBody
     fun agentCards() : List<AgentCard> {
-        return AgentCardFactory().getAllAgentCards()
+        val response = AgentCardFactory().getAllAgentCards()
+        println(response)
+        return response
     }
 
 }
