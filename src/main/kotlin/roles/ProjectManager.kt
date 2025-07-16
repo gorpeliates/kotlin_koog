@@ -28,6 +28,8 @@ import kotlin.uuid.Uuid
 class ProjectManager(
     val name: String,
     val systemPrompt:String = "You are a project manager. You should break down the tasks given the product design."
+            + "You can access what each other agent does by using the getAgentDetails tool." +
+            "You can ask questions to these agents to prepare the tasks, if you need additional information to do so.",
 ) : MASAIAgent{
 
     override fun toString(): String {

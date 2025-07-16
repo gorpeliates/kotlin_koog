@@ -7,6 +7,7 @@ import io.a2a.spec.AgentSkill
 import io.github.cdimascio.dotenv.dotenv
 import jakarta.inject.Singleton
 import org.springframework.stereotype.Component
+import roles.Architect
 import roles.Engineer
 import roles.MASAIAgent
 import roles.ProductManager
@@ -19,7 +20,8 @@ class AgentServer {
     private val id_to_agents : Map<Int, MASAIAgent> = mapOf(
         10001 to Engineer("Engineer agent"),
         10004 to ProductManager("ProductManager agent"),
-        10007 to ProjectManager("ProjectManager agent")
+        10007 to ProjectManager("ProjectManager agent"),
+        10011 to Architect("Architer agent"),
     )
     @PublicAgentCard
     fun engineerAgentCard(): AgentCard {
@@ -118,11 +120,41 @@ class AgentServer {
             .build()
     }
 
+    @PublicAgentCard
+    fun architectAgentCard(): AgentCard {
+        return AgentCard.Builder()
+            .name("Architect Agent")
+            .description("Responsible for designing the software ")
+            .url("http://localhost:$SERVER_URL/sendmessage/10011")
+            .version("1.0.0")
+            .capabilities(
+                AgentCapabilities.Builder()
+                    .streaming(true)
+                    .pushNotifications(false)
+                    .stateTransitionHistory(false)
+                    .build()
+            )
+            .defaultInputModes(mutableListOf<String?>("text"))
+            .defaultOutputModes(mutableListOf<String?>("text"))
+            .skills(
+                mutableListOf<AgentSkill?>(
+                    AgentSkill.Builder()
+                        .id("software_design")
+                        .name("Plan software")
+                        .description("Creates the architecture and design of a software, given the requirements.")
+                        .tags(mutableListOf<String?>("plan", "design", "software", "architecture"))
+                        .build()
+                )
+            )
+            .build()
+    }
+
     fun getAllAgentCards(): MutableList<AgentCard> {
         return arrayListOf(
             engineerAgentCard(),
             productManagerAgentCard(),
-            projectManagerAgentCard()
+            projectManagerAgentCard(),
+            architectAgentCard()
         )
     }
 

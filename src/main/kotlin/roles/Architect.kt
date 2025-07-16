@@ -28,7 +28,10 @@ import kotlin.uuid.Uuid
 @OptIn(ExperimentalUuidApi::class)
 class Architect(
     val name: String,
-    var systemPrompt:String = "You are an architect. Your mission is to design a software given the requirements"
+    var systemPrompt:String = "You are an architect. Your mission is to design a software given the requirements" +
+            "You can access what each other agent does by using the getAgentDetails tool." +
+            "You can send messages to these agents to design the software, if you need additional information to do so."
+
 ) : MASAIAgent {
 
 
