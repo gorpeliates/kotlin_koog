@@ -21,8 +21,6 @@ class AgentCommunicationTools : ToolSet{
     @LLMDescription("Get the details of all the agents from their agent cards.")
     fun getAgentDetails() : String{
         return try {
-
-            println("TOOL CALLED")
             val endpoint = "$serverURL/.well-known"
             val response = restTemplate.getForObject(endpoint, String::class.java)
             response
@@ -44,6 +42,7 @@ class AgentCommunicationTools : ToolSet{
                 contentType = MediaType.APPLICATION_JSON
             }
 
+            println("Sending message with params: message: $message, agentEndpoint: $agentEndpoint")
             val requestBody = mapOf("sender" to this.name,"message" to message)
             val request = HttpEntity(requestBody, headers)
 
