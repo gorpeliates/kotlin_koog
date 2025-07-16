@@ -9,10 +9,11 @@ import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
 
+@Suppress("unused")
 @LLMDescription("Tools for communicating with other agents through their API endpoints.")
 class AgentCommunicationTools : ToolSet{
 
-    private val dotenv = dotenv()
+    private val serverURL: String = dotenv()["SPRING_SERVER_URL"]
     private val restTemplate = RestTemplate()
 
     @Tool
@@ -27,14 +28,32 @@ class AgentCommunicationTools : ToolSet{
             val headers = HttpHeaders().apply {
                 contentType = MediaType.APPLICATION_JSON
             }
-            val serverURL = dotenv["SPRING_SERVER_URL"]
+
             val requestBody = mapOf("sender" to this.name,"message" to message)
             val request = HttpEntity(requestBody, headers)
 
-            val response = restTemplate.postForObject(serverURL+agentEndpoint, request, String::class.java )
+            val response = restTemplate.postForObject("$serverURL/$agentEndpoint", request, String::class.java )
             response ?: "No response received"
         } catch (e: Exception) {
             "Error sending message: ${e.message}"
+        }
+    }
+
+    @Tool
+    @LLMDescription("Get the details of all the agents from their agent cards.")
+    fun getAgentDetails(): String{
+        return try {
+            val headers = HttpHeaders().apply {
+                contentType = MediaType.APPLICATION_JSON
+            }
+            val requestBody = mapOf("sender" to this.name)
+            val request = HttpEntity(requestBody, headers)
+            val response = restTemplate.getForObject("$serverURL./well-known", String::class.java ,request)
+            response ?: "No response received"
+
+        }
+        catch (e: Exception) {
+            "Error retrieving agent cards: ${e.message}"
         }
     }
 }

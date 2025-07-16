@@ -8,19 +8,28 @@ plugins {
 group = "com.samples.a2a"
 version = "1.0-SNAPSHOT"
 
-
+springBoot {
+    mainClass.set("server.MASServerApplicationKt")
+}
 repositories {
     mavenCentral()
 }
 
 val a2aSdkVersion = "0.2.3.Beta1"
-
+configurations.all {
+    resolutionStrategy.eachDependency {
+        if (requested.group == "org.jetbrains.kotlinx" && requested.name.startsWith("kotlinx-coroutines")) {
+            useVersion("1.10.2")
+        }
+    }
+}
 dependencies {
     implementation(kotlin("stdlib"))
 
 
     // Kotlin coroutines
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2")
+    //spring
     implementation("org.springframework.boot:spring-boot-starter")
     implementation("org.springframework.boot:spring-boot-starter-web")
 

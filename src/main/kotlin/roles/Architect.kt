@@ -12,6 +12,7 @@ import ai.koog.agents.core.tools.reflect.asTools
 import ai.koog.agents.ext.tool.AskUser
 import ai.koog.agents.ext.tool.SayToUser
 import ai.koog.agents.features.eventHandler.feature.handleEvents
+import ai.koog.agents.memory.model.MemoryScope
 import ai.koog.prompt.dsl.prompt
 import ai.koog.prompt.executor.llms.all.simpleOpenRouterExecutor
 import ai.koog.prompt.executor.model.PromptExecutor
@@ -93,8 +94,8 @@ class Architect(
             provider = LLMProvider.OpenRouter,
             id = "deepseek/deepseek-r1-0528:free",
             capabilities = listOf(
-                LLMCapability.Completion, LLMCapability.Tools, LLMCapability.Vision, LLMCapability.Embed,
-                LLMCapability.PromptCaching) as List<LLMCapability>
+                LLMCapability.Completion, LLMCapability.Tools,  LLMCapability.Embed,
+                LLMCapability.PromptCaching)
         ),
         maxAgentIterations = 10
     )

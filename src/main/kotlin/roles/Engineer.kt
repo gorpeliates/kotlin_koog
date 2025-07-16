@@ -13,11 +13,14 @@ import ai.koog.agents.ext.tool.AskUser
 import ai.koog.agents.ext.tool.SayToUser
 import ai.koog.agents.features.eventHandler.feature.handleEvents
 import ai.koog.prompt.dsl.prompt
+import ai.koog.prompt.executor.llms.all.simpleOllamaAIExecutor
 import ai.koog.prompt.executor.llms.all.simpleOpenRouterExecutor
 import ai.koog.prompt.executor.model.PromptExecutor
 import ai.koog.prompt.llm.LLMCapability
 import ai.koog.prompt.llm.LLMProvider
 import ai.koog.prompt.llm.LLModel
+import ai.koog.prompt.llm.OllamaModels
+import ai.koog.prompt.params.LLMParams
 import io.github.cdimascio.dotenv.dotenv
 import tools.AgentCommunicationTools
 import kotlin.uuid.ExperimentalUuidApi
@@ -26,10 +29,9 @@ import kotlin.uuid.Uuid
 @OptIn(ExperimentalUuidApi::class)
 class Engineer(val name: String,
                val task: String,
-               val port: Int,
-    val systemPrompt: String =
-        "You are a software engineer in a software company. You will be given a task to complete. \n" +
-            " You will use the tools and can communicate with other people in the company to complete the task.",
+                val systemPrompt: String =
+                    "You are a software engineer in a software company. You will be given a task to complete. \n" +
+                    " You will use the tools and can communicate with other people in the company to complete the task.",
 ) {
 
 
@@ -38,8 +40,8 @@ class Engineer(val name: String,
     }
 
 
-
-    val executor: PromptExecutor = simpleOpenRouterExecutor(dotenv()["OPEN_ROUTER_API_KEY"])
+//    val executor: PromptExecutor = simpleOpenRouterExecutor(dotenv()["OPEN_ROUTER_API_KEY"])
+    val executor: PromptExecutor = simpleOllamaAIExecutor("http://127.0.0.1:11434")
 
     val toolRegistry = ToolRegistry {
         // Special tool, required with this type of agent.
@@ -87,19 +89,27 @@ class Engineer(val name: String,
     }
 
 
+//    val aiAgentConfig = AIAgentConfig(
+//        prompt = prompt("test") {
+//            system(systemPrompt)
+//        },
+//        model = LLModel(
+//            provider = LLMProvider.OpenRouter,
+//            id = "meta-llama/llama-3.3-70b-instruct:free",
+//            capabilities = listOf(
+//                LLMCapability.Completion, LLMCapability.Tools,  LLMCapability.Embed,
+//                LLMCapability.PromptCaching)
+//        ),
+//        maxAgentIterations = 10
+//    )
     val aiAgentConfig = AIAgentConfig(
         prompt = prompt("test") {
             system(systemPrompt)
         },
-        model = LLModel(
-            provider = LLMProvider.OpenRouter,
-            id = "deepseek/deepseek-r1-0528:free",
-            capabilities = listOf(
-                LLMCapability.Completion, LLMCapability.Tools, LLMCapability.Vision, LLMCapability.Embed,
-                LLMCapability.PromptCaching) as List<LLMCapability>
-        ),
+        model = OllamaModels.Alibaba.QWEN_CODER_2_5_32B,
         maxAgentIterations = 10
     )
+
 
     val agent = AIAgent(
         promptExecutor = executor,

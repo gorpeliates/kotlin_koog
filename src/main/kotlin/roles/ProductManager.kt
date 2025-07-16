@@ -94,8 +94,8 @@ class ProductManager(
             provider = LLMProvider.OpenRouter,
             id = "deepseek/deepseek-r1-0528:free",
             capabilities = listOf(
-                LLMCapability.Completion, LLMCapability.Tools, LLMCapability.Vision, LLMCapability.Embed,
-                LLMCapability.PromptCaching) as List<LLMCapability>
+                LLMCapability.Completion, LLMCapability.Tools, LLMCapability.Embed,
+                LLMCapability.PromptCaching)
         ),
         maxAgentIterations = 10
     )
