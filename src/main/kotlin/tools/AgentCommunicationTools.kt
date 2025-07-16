@@ -18,6 +18,20 @@ class AgentCommunicationTools : ToolSet{
     private val restTemplate = RestTemplate()
 
     @Tool
+    @LLMDescription("Get the details of all the agents from their agent cards.")
+    fun getAgentDetails() : String{
+        return try {
+
+            println("TOOL CALLED")
+            val endpoint = "$serverURL/.well-known"
+            val response = restTemplate.getForObject(endpoint, String::class.java)
+            response
+        } catch (e: Exception) {
+            println("Error retrieving agent cards: ${e.message}")
+        } as String
+    }
+
+    @Tool
     @LLMDescription("Sends a message to another agent via HTTP POST request")
     fun sendMessage(
         @LLMDescription(description = "The URL endpoint for the chosen agent.")
@@ -40,16 +54,5 @@ class AgentCommunicationTools : ToolSet{
         }
     }
 
-    @Tool
-    @LLMDescription("Get the details of all the agents from their agent cards.")
-    fun getAgentDetails() : String{
-        return try {
 
-            val endpoint = "$serverURL/.well-known"
-            val response = restTemplate.getForObject(endpoint, String::class.java)
-            response
-        } catch (e: Exception) {
-            println("Error retrieving agent cards: ${e.message}")
-        } as String
-    }
 }

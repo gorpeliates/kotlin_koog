@@ -33,15 +33,15 @@ class Engineer(val name: String,
                     "You are a software engineer in a software company. You will be given a task to complete. \n" +
                     " You will use the tools and can communicate with other people in the company to complete the task.",
 ) {
-
+    private val MAX_TOKENS_THRESHOLD = 1000
 
     override fun toString(): String {
         return "Engineer(name='$name', task='$task')"
     }
 
 
-    val executor: PromptExecutor = simpleOpenRouterExecutor(dotenv()["OPEN_ROUTER_API_KEY"])
-
+//    val executor: PromptExecutor = simpleOpenRouterExecutor(dotenv()["OPEN_ROUTER_API_KEY"])
+     val executor: PromptExecutor = simpleOllamaAIExecutor(dotenv()["OLLAMA_HOST"])
     val toolRegistry = ToolRegistry {
         // Special tool, required with this type of agent.
         tool(AskUser)
@@ -57,51 +57,42 @@ class Engineer(val name: String,
 
         edge(nodeStart forwardTo nodeCallLLM)
 
-        edge((nodeCallLLM forwardTo nodeFinish)
-                transformed {it.first()}
-                onAssistantMessage{true}
+        edge(
+            (nodeCallLLM forwardTo nodeFinish)
+                    transformed { it.first() }
+                    onAssistantMessage { true }
         )
 
-        edge((nodeCallLLM forwardTo nodeExecuteToolMultiple)
-                onMultipleToolCalls  {true}
+        edge(
+            (nodeCallLLM forwardTo nodeExecuteToolMultiple)
+                    onMultipleToolCalls { true }
         )
 
-        edge((nodeExecuteToolMultiple forwardTo nodeCompressHistory )
-                onCondition { llm.readSession { prompt.latestTokenUsage > 1000 } }
+        edge(
+            (nodeExecuteToolMultiple forwardTo nodeCompressHistory)
+                    onCondition { llm.readSession { prompt.latestTokenUsage > MAX_TOKENS_THRESHOLD } }
         )
 
         edge(nodeCompressHistory forwardTo nodeSendToolResultMultiple)
 
-        edge((nodeExecuteToolMultiple forwardTo nodeSendToolResultMultiple )
-                onCondition { llm.readSession { prompt.latestTokenUsage <= 1000 } }
-        )
-
-        edge((nodeSendToolResultMultiple forwardTo nodeExecuteToolMultiple)
-                onMultipleToolCalls  {true}
+        edge(
+            (nodeExecuteToolMultiple forwardTo nodeSendToolResultMultiple)
+                    onCondition { llm.readSession { prompt.latestTokenUsage <= MAX_TOKENS_THRESHOLD } }
         )
 
         edge(
             (nodeSendToolResultMultiple forwardTo nodeFinish)
-//                    transformed { it.first() }
                     onAssistantMessage { true }
         )
     }
 
-
     val aiAgentConfig = AIAgentConfig(
-        prompt = prompt("test") {
-            system(systemPrompt)
+        prompt = prompt("test", LLMParams(temperature = 0.0)) {
+            system("You are a software engineer. You write code based on the requirements you get from others")
         },
-        model = LLModel(
-            provider = LLMProvider.OpenRouter,
-            id = "deepseek/deepseek-chat-v3-0324:free",
-            capabilities = listOf(
-                LLMCapability.Completion, LLMCapability.Tools,  LLMCapability.Embed,
-                LLMCapability.PromptCaching)
-        ),
-        maxAgentIterations = 10
+        model = OllamaModels.Meta.LLAMA_3_2_3B,
+        maxAgentIterations = 50
     )
-
 
 
     val agent = AIAgent(
