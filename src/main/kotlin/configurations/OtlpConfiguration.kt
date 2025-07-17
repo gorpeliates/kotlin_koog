@@ -6,10 +6,10 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
 @Configuration
-class OtlpConfigration {
+class OtlpConfiguration {
 
     @Bean
-    fun otlpHttpSpanExporter(@Value($$"${tracing.url}") url:String): OtlpHttpSpanExporter {
+    fun otlpHttpSpanExporter(@Value("\${tracing.url}") url: String): OtlpHttpSpanExporter {
         return OtlpHttpSpanExporter.builder().setEndpoint(url).build()
     }
 

@@ -10,7 +10,6 @@ import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Component
-import org.springframework.web.client.getForEntity
 
 @Suppress("unused")
 @LLMDescription("Tools for communicating with other agents through their API endpoints.")
