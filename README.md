@@ -1,4 +1,4 @@
-# Kotlin Koog Project
+# koog-opentelemetry-mas
 
 1. Start the Jaeger service using Docker Compose:
    ```bash
