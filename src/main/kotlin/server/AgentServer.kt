@@ -8,6 +8,7 @@ import io.github.cdimascio.dotenv.dotenv
 import jakarta.inject.Singleton
 import org.springframework.stereotype.Component
 import roles.Architect
+import roles.Company
 import roles.Engineer
 import roles.MASAIAgent
 import roles.ProductManager
@@ -22,6 +23,7 @@ class AgentServer {
         10004 to ProductManager("ProductManager agent"),
         10007 to ProjectManager("ProjectManager agent"),
         10011 to Architect("Architer agent"),
+        10014 to Company("Company")
     )
     @PublicAgentCard
     fun engineerAgentCard(): AgentCard {
@@ -149,12 +151,45 @@ class AgentServer {
             .build()
     }
 
+
+
+    @PublicAgentCard
+    fun companyAgentCard(): AgentCard {
+        return AgentCard.Builder()
+            .name("Company Agent")
+            .description("Responsible for demanding the software and supervising")
+            .url("http://localhost:$SERVER_URL/sendmessage/100014")
+            .version("1.0.0")
+            .capabilities(
+                AgentCapabilities.Builder()
+                    .streaming(true)
+                    .pushNotifications(true)
+                    .stateTransitionHistory(true)
+                    .build()
+            )
+            .defaultInputModes(mutableListOf<String?>("text"))
+            .defaultOutputModes(mutableListOf<String?>("text", "schedule"))
+            .skills(
+                mutableListOf<AgentSkill?>(
+                    AgentSkill.Builder()
+                        .id("supervision")
+                        .name("Company Supervision")
+                        .description("Supervises the employees in the company to ensure responsibilities are distributed and completed correctly.")
+                        .tags(mutableListOf<String?>("supervision", "verification", "coordination"))
+                        .build(),
+                )
+            )
+            .build()
+    }
+
     fun getAllAgentCards(): MutableList<AgentCard> {
         return arrayListOf(
             engineerAgentCard(),
             productManagerAgentCard(),
             projectManagerAgentCard(),
-            architectAgentCard()
+            architectAgentCard(),
+            companyAgentCard()
+
         )
     }
 
