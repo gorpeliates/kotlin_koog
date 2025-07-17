@@ -84,4 +84,20 @@ class MASController @Autowired constructor(
             return ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
+
+    @PostMapping
+    fun startWorkflow(@RequestBody task: String):ResponseEntity<String> {
+        val currentSpan  = tracer.spanBuilder("start-workflow").setParent(Context.current()).startSpan()
+        currentSpan.setAttribute("task", task)
+
+        try {
+            return ResponseEntity("TODO",HttpStatus.I_AM_A_TEAPOT)
+
+        }catch (e : Exception){
+            currentSpan.setAttribute("error", "Error during workflow")
+            currentSpan.setAttribute("stacktrace", e.stackTrace.joinToString("\n"))
+            currentSpan.end()
+            return ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR)
+        }
+    }
 }
