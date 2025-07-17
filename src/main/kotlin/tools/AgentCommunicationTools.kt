@@ -4,18 +4,23 @@ import ai.koog.agents.core.tools.annotations.LLMDescription
 import ai.koog.agents.core.tools.annotations.Tool
 import ai.koog.agents.core.tools.reflect.ToolSet
 import io.github.cdimascio.dotenv.dotenv
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.client.RestTemplate
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
+import org.springframework.stereotype.Component
 import org.springframework.web.client.getForEntity
 
 @Suppress("unused")
 @LLMDescription("Tools for communicating with other agents through their API endpoints.")
+@Component
 class AgentCommunicationTools : ToolSet{
 
     private val serverURL: String = dotenv()["SPRING_SERVER_URL"]
-    private val restTemplate = RestTemplate()
+
+    @Autowired
+    private lateinit var restTemplate : RestTemplate
 
     @Tool
     @LLMDescription("Get the details of all the agents from their agent cards.")
