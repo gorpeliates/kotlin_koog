@@ -1,11 +1,12 @@
 import kotlinx.coroutines.runBlocking
-import roles.Engineer
+import roles.Company
+
 
 fun main(args: Array<String>) {
 
-    val engineerAgent = Engineer("Engineer agent","Write code")
+    val companyAgent = Company("Company Agent")
     runBlocking {
-        engineerAgent.agent.run("Send a message to an agent at port sendmessage/10004" )
+        companyAgent.agent.run("Send a message to an agent at port sendmessage/10004" )
     }
 
 }
