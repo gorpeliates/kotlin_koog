@@ -2,6 +2,7 @@ package roles
 
 import ai.koog.agents.core.agent.AIAgent
 import ai.koog.agents.core.agent.config.AIAgentConfig
+import ai.koog.agents.core.agent.entity.AIAgentStrategy
 import ai.koog.agents.core.dsl.builder.forwardTo
 import ai.koog.agents.core.dsl.builder.strategy
 import ai.koog.agents.core.dsl.extension.nodeExecuteMultipleTools
@@ -18,6 +19,7 @@ import ai.koog.agents.core.tools.reflect.asTools
 import ai.koog.agents.ext.tool.AskUser
 import ai.koog.agents.ext.tool.SayToUser
 import ai.koog.agents.features.eventHandler.feature.handleEvents
+import ai.koog.prompt.dsl.ModerationResult
 import ai.koog.prompt.dsl.prompt
 import ai.koog.prompt.executor.llms.all.simpleOllamaAIExecutor
 import ai.koog.prompt.executor.model.PromptExecutor
@@ -25,8 +27,10 @@ import ai.koog.prompt.llm.LLMCapability
 import ai.koog.prompt.llm.LLMProvider
 import ai.koog.prompt.llm.LLModel
 import io.github.cdimascio.dotenv.dotenv
+import io.lettuce.core.dynamic.output.OutputType
 import kotlinx.coroutines.runBlocking
 import tools.AgentCommunicationTools
+import kotlin.reflect.typeOf
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
@@ -106,37 +110,36 @@ abstract class MASAIAgent (val name: String, val systemPrompt : String){
         maxAgentIterations = 10
     )
 
-
      val agent = AIAgent(
+         inputType = typeOf<String>(),
+        outputType = typeOf<AgentResponse>(),
         promptExecutor = executor,
         strategy = strategy,
         agentConfig = aiAgentConfig,
-        toolRegistry = toolRegistry
+        toolRegistry = toolRegistry,
     ) {
-        handleEvents {
-            onToolCall{
-                    tool : Tool<*, *>, toolArgs : Tool.Args ->
-                println("Tool called: ${tool.name} with args: $toolArgs")
-            }
-            onAgentRunError {
-                    strategyName: String, sessionUuid: Uuid?, throwable: Throwable ->
-                println("ERROR")
-                println(throwable.cause.toString())
-                println(throwable.message.toString())
-                println(throwable.stackTraceToString())
-            }
-            onAgentFinished {
-                    strategyName: String, result: String? ->
-                println("Result: $result")
-            }
-        }
-    }
+         handleEvents {
+             onToolCall { eventContext ->
+                 println("Tool called: tool ${eventContext.tool.name}, args ${eventContext.toolArgs}")
+             }
+
+             onAgentRunError { eventContext ->
+                 println("An error occurred: ${eventContext.throwable.message}\n${eventContext.throwable.stackTraceToString()}")
+             }
+
+             onAgentFinished { eventContext ->
+                 println("Result: ${eventContext.result}")
+             }
+         }
+     }
+
+
 
     fun runAgent(msg:String): String {
 
         var response = ""
         runBlocking {
-            response = agent.runAndGetResult(msg).toString()
+            response = agent.run(msg).toString()
         }
         return response
     }

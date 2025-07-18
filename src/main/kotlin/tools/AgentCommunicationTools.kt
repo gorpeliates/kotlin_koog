@@ -11,6 +11,11 @@ import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Component
+import roles.Architect
+import roles.Engineer
+import roles.MASAIAgent
+import roles.ProductManager
+import roles.ProjectManager
 
 @Suppress("unused")
 @LLMDescription("Tools for communicating with other agents through their API endpoints and getting their information.")
@@ -19,6 +24,13 @@ class AgentCommunicationTools : ToolSet{
     private val serverURL: String = dotenv()["SPRING_SERVER_URL"]
 
     private  var restTemplate : RestTemplate = RestTemplateBuilder().build()
+
+    private val id_to_agents : Set<String> = setOf(
+        "engineer" ,
+        "productManager" ,
+        "projectManaager" ,
+        "architect"
+    )
 
     @Tool
     @LLMDescription("Get the details of all the agents in the server.")
@@ -56,5 +68,12 @@ class AgentCommunicationTools : ToolSet{
         }
     }
 
-
+    @Tool
+    @LLMDescription("Get the ids of the other agents in the system.")
+    fun getOtherAgents(
+        @LLMDescription(description = "The ID of the agent requesting the information.")
+        agentName:String
+    ): List<String> {
+        return id_to_agents.toList()
+    }
 }

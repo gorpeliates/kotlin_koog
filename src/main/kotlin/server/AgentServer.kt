@@ -5,32 +5,35 @@ import io.a2a.spec.AgentCapabilities
 import io.a2a.spec.AgentCard
 import io.a2a.spec.AgentSkill
 import io.github.cdimascio.dotenv.dotenv
-import jakarta.inject.Singleton
+import org.springframework.context.annotation.Scope
 import org.springframework.stereotype.Component
 import roles.Architect
-import roles.Company
+import roles.Orchestrator
 import roles.Engineer
 import roles.MASAIAgent
 import roles.ProductManager
 import roles.ProjectManager
 
-@Singleton
+@Scope("prototype")
 @Component
 class AgentServer {
     private val SERVER_URL = dotenv()["SPRING_SERVER_URL"]
-    private val id_to_agents : Map<Int, MASAIAgent> = mapOf(
-        10001 to Engineer(),
-        10004 to ProductManager(),
-        10007 to ProjectManager(),
-        10011 to Architect(),
-        10014 to Company()
+
+    private val id_to_agents : Map<String, MASAIAgent> = mapOf(
+        "engineer" to Engineer(),
+        "productmanager" to ProductManager(),
+        "projectmanager" to ProjectManager(),
+        "architect" to Architect(),
+        "orchestrator" to Orchestrator()
     )
+
+    private val orchestrator = Orchestrator()
     @PublicAgentCard
     fun engineerAgentCard(): AgentCard {
         return AgentCard.Builder()
             .name("Engineer Agent")
             .description("Responsible for writing code ")
-            .url("http://localhost:$SERVER_URL/sendmessage/10001")
+            .url("http://localhost:$SERVER_URL/sendmessage/engineer")
             .version("1.0.0")
             .capabilities(
                 AgentCapabilities.Builder()
@@ -58,7 +61,7 @@ class AgentServer {
         return AgentCard.Builder()
             .name("Product Manager Agent")
             .description("Responsible for product strategy and roadmap planning")
-            .url("http://localhost:$SERVER_URL/sendmessage/10004")
+            .url("http://localhost:$SERVER_URL/sendmessage/productmanager")
             .version("1.0.0")
             .capabilities(
                 AgentCapabilities.Builder()
@@ -92,7 +95,7 @@ class AgentServer {
         return AgentCard.Builder()
             .name("Project Manager Agent")
             .description("Responsible for project coordination and team management")
-            .url("http://localhost:$SERVER_URL/sendmessage/10007")
+            .url("http://localhost:$SERVER_URL/sendmessage/projectmanager")
             .version("1.0.0")
             .capabilities(
                 AgentCapabilities.Builder()
@@ -127,7 +130,7 @@ class AgentServer {
         return AgentCard.Builder()
             .name("Architect Agent")
             .description("Responsible for designing the software ")
-            .url("http://localhost:$SERVER_URL/sendmessage/10011")
+            .url("http://localhost:$SERVER_URL/sendmessage/architect")
             .version("1.0.0")
             .capabilities(
                 AgentCapabilities.Builder()
@@ -154,11 +157,11 @@ class AgentServer {
 
 
     @PublicAgentCard
-    fun companyAgentCard(): AgentCard {
+    fun orchestratorAgentCard(): AgentCard {
         return AgentCard.Builder()
             .name("Company Agent")
             .description("Responsible for demanding the software and supervising")
-            .url("http://localhost:$SERVER_URL/sendmessage/100014")
+            .url("http://localhost:$SERVER_URL/sendmessage/orchestrator")
             .version("1.0.0")
             .capabilities(
                 AgentCapabilities.Builder()
@@ -188,13 +191,18 @@ class AgentServer {
             productManagerAgentCard(),
             projectManagerAgentCard(),
             architectAgentCard(),
-            companyAgentCard()
+            orchestratorAgentCard()
 
         )
     }
 
-    fun getAgent(agentId: Int) : MASAIAgent {
+    fun getAgent(agentId: String) : MASAIAgent {
         return id_to_agents[agentId]!!
+    }
+
+
+    fun startWorkflow(task:String): String {
+        return orchestrator.startTask(task)
     }
 
 

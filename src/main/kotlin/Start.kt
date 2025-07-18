@@ -1,5 +1,4 @@
 import kotlinx.coroutines.runBlocking
-import roles.Company
 import roles.Engineer
 
 
@@ -12,3 +11,10 @@ fun main(args: Array<String>) {
     }
 
 }
+
+//while(response != message) {
+//    val response = agent.run(message)
+//
+//    reciever, sentmessage = method(response)
+//    sendmessage(reciever, sentmessage)
+//}

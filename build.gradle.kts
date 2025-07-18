@@ -51,7 +51,7 @@ dependencies {
     implementation("io.opentelemetry:opentelemetry-exporter-otlp:${openTelemetryVersion}")
 
     // Koog dependencies
-    implementation("ai.koog:koog-agents:0.2.1")
+    implementation("ai.koog:koog-agents:0.3.0")
     implementation("ch.qos.logback:logback-classic:1.5.13")
 
     // Micrometer tracing bridge

@@ -20,8 +20,8 @@ import org.springframework.web.bind.annotation.ResponseBody
 
 @Controller
 class MASController @Autowired constructor(
+    private val tracer: io.opentelemetry.api.trace.Tracer,
     private val agentServer: AgentServer,
-    private val tracer: io.opentelemetry.api.trace.Tracer
     ){
 
     @field:Value("\${spring.application.name}")
@@ -46,7 +46,7 @@ class MASController @Autowired constructor(
                     .setAttribute("agentId", agentId)
                     .setAttribute("message", logMessage)
 
-                val agent = agentServer.getAgent(Integer.parseInt(agentId))
+                val agent = agentServer.getAgent(agentId)
                 val response : String = agent.runAgent(body["message"] as String)
 
                 currentSpan.setAttribute("response", response)
@@ -68,7 +68,7 @@ class MASController @Autowired constructor(
 
         val currentSpan = tracer.spanBuilder("agent-cards-request").setParent(Context.current()).startSpan()
         try {
-            val response = agentServer.getAllAgentCards()
+            val response = AgentServer().getAllAgentCards()
             val requestId = MDC.get("requestId") ?: "N/A"
 
             logger.info("[$requestId] [$applicationName] Incoming request to /.well-known - Response: $response")
@@ -85,13 +85,15 @@ class MASController @Autowired constructor(
         }
     }
 
-    @PostMapping
+    @PostMapping("/startworkflow")
     fun startWorkflow(@RequestBody task: String):ResponseEntity<String> {
-        val currentSpan  = tracer.spanBuilder("start-workflow").setParent(Context.current()).startSpan()
+        val currentSpan  = tracer.spanBuilder("workflow-RANDOMIZEDUUID").setParent(Context.current()).startSpan()
         currentSpan.setAttribute("task", task)
 
         try {
-            return ResponseEntity("TODO",HttpStatus.I_AM_A_TEAPOT)
+            val response = AgentServer().startWorkflow(task)
+            currentSpan.setAttribute("response", response)
+            return ResponseEntity(response, HttpStatus.OK)
 
         }catch (e : Exception){
             currentSpan.setAttribute("error", "Error during workflow")
