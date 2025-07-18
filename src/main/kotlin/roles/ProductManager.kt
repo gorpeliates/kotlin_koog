@@ -13,11 +13,14 @@ import ai.koog.agents.ext.tool.AskUser
 import ai.koog.agents.ext.tool.SayToUser
 import ai.koog.agents.features.eventHandler.feature.handleEvents
 import ai.koog.prompt.dsl.prompt
+import ai.koog.prompt.executor.llms.all.simpleOllamaAIExecutor
 import ai.koog.prompt.executor.llms.all.simpleOpenRouterExecutor
 import ai.koog.prompt.executor.model.PromptExecutor
 import ai.koog.prompt.llm.LLMCapability
 import ai.koog.prompt.llm.LLMProvider
 import ai.koog.prompt.llm.LLModel
+import ai.koog.prompt.llm.OllamaModels
+import ai.koog.prompt.params.LLMParams
 import io.github.cdimascio.dotenv.dotenv
 import kotlinx.coroutines.runBlocking
 import tools.AgentCommunicationTools
@@ -40,7 +43,7 @@ class ProductManager(
 
 
 
-    val executor: PromptExecutor = simpleOpenRouterExecutor(dotenv()["OPEN_ROUTER_API_KEY"])
+    val executor: PromptExecutor = simpleOllamaAIExecutor(dotenv()["OLLAMA_HOST"])
 
     val toolRegistry = ToolRegistry {
         // Special tool, required with this type of agent.
@@ -88,18 +91,27 @@ class ProductManager(
     }
 
 
-    val aiAgentConfig = AIAgentConfig(
-        prompt = prompt("test") {
-            system(systemPrompt )
+//    val aiAgentConfig = AIAgentConfig(
+//        prompt = prompt("test") {
+//            system(systemPrompt )
+//        },
+//        model = LLModel(
+//            provider = LLMProvider.Ollama,
+//            id = "llama3.2:3b",
+//            capabilities = listOf(
+//                LLMCapability.Completion, LLMCapability.Tools, LLMCapability.Embed,
+//                LLMCapability.PromptCaching
+//            )
+//        ),
+//        maxAgentIterations = 10
+//    )
+
+        val aiAgentConfig = AIAgentConfig(
+        prompt = prompt("test", LLMParams(temperature = 0.0)) {
+            system(systemPrompt)
         },
-        model = LLModel(
-            provider = LLMProvider.OpenRouter,
-            id = "deepseek/deepseek-r1-0528:free",
-            capabilities = listOf(
-                LLMCapability.Completion, LLMCapability.Tools, LLMCapability.Embed,
-                LLMCapability.PromptCaching)
-        ),
-        maxAgentIterations = 10
+        model = OllamaModels.Meta.LLAMA_3_2_3B,
+        maxAgentIterations = 50
     )
 
     override val agent = AIAgent(

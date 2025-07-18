@@ -5,6 +5,7 @@ import ai.koog.agents.core.tools.annotations.Tool
 import ai.koog.agents.core.tools.reflect.ToolSet
 import io.github.cdimascio.dotenv.dotenv
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.web.client.RestTemplateBuilder
 import org.springframework.web.client.RestTemplate
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
@@ -19,9 +20,8 @@ class AgentCommunicationTools : ToolSet{
     private val serverURL: String = dotenv()["SPRING_SERVER_URL"]
 
     @Autowired
-    private lateinit var restTemplate : RestTemplate
+    private  var restTemplate : RestTemplate = RestTemplateBuilder().build()
 
-    @Tool
     @LLMDescription("Get the details of all the agents from their agent cards.")
     fun getAgentDetails() : String{
         return try {
@@ -50,7 +50,7 @@ class AgentCommunicationTools : ToolSet{
             val requestBody = mapOf("sender" to this.name,"message" to message)
             val request = HttpEntity(requestBody, headers)
 
-            val response = restTemplate.postForObject("$serverURL/$agentEndpoint", request, String::class.java )
+            val response = restTemplate.postForObject(agentEndpoint, request, String::class.java )
             response ?: "No response received"
         } catch (e: Exception) {
             "Error sending message: ${e.message}"

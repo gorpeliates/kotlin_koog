@@ -18,6 +18,8 @@ import ai.koog.prompt.executor.model.PromptExecutor
 import ai.koog.prompt.llm.LLMCapability
 import ai.koog.prompt.llm.LLMProvider
 import ai.koog.prompt.llm.LLModel
+import ai.koog.prompt.llm.OllamaModels
+import ai.koog.prompt.params.LLMParams
 import io.github.cdimascio.dotenv.dotenv
 import kotlinx.coroutines.runBlocking
 import tools.AgentCommunicationTools
@@ -86,17 +88,11 @@ class ProjectManager(
 
 
     val aiAgentConfig = AIAgentConfig(
-        prompt = prompt("test") {
-            system(systemPrompt )
+        prompt = prompt("test", LLMParams(temperature = 0.0)) {
+            system(systemPrompt)
         },
-        model = LLModel(
-            provider = LLMProvider.OpenRouter,
-            id = "deepseek/deepseek-r1-0528:free",
-            capabilities = listOf(
-                LLMCapability.Completion, LLMCapability.Tools, LLMCapability.Embed,
-                LLMCapability.PromptCaching)
-        ),
-        maxAgentIterations = 10
+        model = OllamaModels.Meta.LLAMA_3_2_3B,
+        maxAgentIterations = 50
     )
 
     override val agent = AIAgent(

@@ -11,12 +11,6 @@ import org.springframework.web.client.RestTemplate
 @SpringBootApplication
 @ComponentScan(basePackages = ["roles","server","configurations"])
 class MASServerApplication
-{
-    @Bean
-    fun restTemplate(restTemplateBuilder: RestTemplateBuilder): RestTemplate {
-        return restTemplateBuilder.build()
-    }
-}
 
     fun main(args: Array<String>) {
         runApplication<MASServerApplication>(*args)
