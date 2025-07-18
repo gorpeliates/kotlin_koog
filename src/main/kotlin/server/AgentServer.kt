@@ -19,12 +19,11 @@ import roles.ProjectManager
 class AgentServer {
     private val SERVER_URL = dotenv()["SPRING_SERVER_URL"]
 
-    private val id_to_agents : Map<String, MASAIAgent> = mapOf(
+    private final val map : Map<String, MASAIAgent> = mapOf(
         "engineer" to Engineer(),
         "productmanager" to ProductManager(),
         "projectmanager" to ProjectManager(),
-        "architect" to Architect(),
-        "orchestrator" to Orchestrator()
+        "architect" to Architect()
     )
 
     private val orchestrator = Orchestrator()
@@ -197,7 +196,7 @@ class AgentServer {
     }
 
     fun getAgent(agentId: String) : MASAIAgent {
-        return id_to_agents[agentId]!!
+        return map[agentId]!!
     }
 
 

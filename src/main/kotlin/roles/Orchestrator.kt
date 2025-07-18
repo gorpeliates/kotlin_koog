@@ -1,6 +1,5 @@
 package roles
 
-import ai.koog.prompt.dsl.prompt
 import kotlinx.coroutines.runBlocking
 import kotlin.uuid.ExperimentalUuidApi
 
@@ -11,7 +10,7 @@ class Orchestrator(name : String = "Company Agent",
 ) : MASAIAgent(name, systemPrompt) {
 
     override fun toString(): String {
-        return "Orchestrator(name='$name')"
+        return "Orchestrator(name='$agentId')"
     }
     /**
      * Starts workflow with the given task and returns a string as a result if succesful

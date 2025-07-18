@@ -9,7 +9,7 @@ class ProjectManager(name : String = "ProjectManager Agent",
                              "You can ask questions to these agents to prepare the tasks, if you need additional information to do so.") : MASAIAgent(name, systemPrompt) {
 
     override fun toString(): String {
-        return "ProjectManager(name='$name')"
+        return "ProjectManager(name='$agentId')"
     }
 
 }

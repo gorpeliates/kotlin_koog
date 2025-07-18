@@ -10,6 +10,6 @@ class Engineer(
             "You can ask questions to these agents to write the code, if you need additional information to do so."
 ) : MASAIAgent(name, systemPrompt) {
     override fun toString(): String {
-        return "Engineer(name='$name')"
+        return "Engineer(name='$agentId')"
     }
 }

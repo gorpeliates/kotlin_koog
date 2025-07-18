@@ -10,7 +10,7 @@ class ProductManager(name: String = "ProductManager Agent",
                              "You can ask questions to these agents to prepare the requirements, if you need additional information to do so."
 ) : MASAIAgent(name, systemPrompt) {
     override fun toString(): String {
-        return "ProductManager(name='$name')"
+        return "ProductManager(name='$agentId')"
     }
 
 }

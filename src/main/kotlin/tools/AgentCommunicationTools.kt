@@ -19,7 +19,7 @@ import roles.ProjectManager
 
 @Suppress("unused")
 @LLMDescription("Tools for communicating with other agents through their API endpoints and getting their information.")
-class AgentCommunicationTools : ToolSet{
+class AgentCommunicationTools(agentId: String) : ToolSet{
 
     private val serverURL: String = dotenv()["SPRING_SERVER_URL"]
 
@@ -28,9 +28,9 @@ class AgentCommunicationTools : ToolSet{
     private val id_to_agents : Set<String> = setOf(
         "engineer" ,
         "productManager" ,
-        "projectManaager" ,
+        "projectManager" ,
         "architect"
-    )
+    ).filter { it != agentId }.toSet()
 
     @Tool
     @LLMDescription("Get the details of all the agents in the server.")

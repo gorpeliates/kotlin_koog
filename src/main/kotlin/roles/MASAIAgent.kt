@@ -16,7 +16,6 @@ import ai.koog.agents.core.tools.annotations.LLMDescription
 import ai.koog.agents.core.tools.reflect.asTools
 import ai.koog.agents.ext.tool.AskUser
 import ai.koog.agents.ext.tool.SayToUser
-import ai.koog.agents.features.eventHandler.feature.handleEvents
 import ai.koog.agents.features.opentelemetry.feature.OpenTelemetry
 import ai.koog.prompt.dsl.prompt
 import ai.koog.prompt.executor.llms.all.simpleOllamaAIExecutor
@@ -37,7 +36,7 @@ import kotlin.reflect.typeOf
 import kotlin.uuid.ExperimentalUuidApi
 
 @OptIn(ExperimentalUuidApi::class)
-abstract class MASAIAgent (val name: String, val systemPrompt : String) {
+abstract class MASAIAgent (val agentId: String, val systemPrompt : String) {
     private val MAX_TOKENS_THRESHOLD = 1000
 
 
@@ -125,7 +124,7 @@ abstract class MASAIAgent (val name: String, val systemPrompt : String) {
         // Special tool, required with this type of agent.
         tool(AskUser)
         tool(SayToUser)
-        tools(AgentCommunicationTools().asTools())
+        tools(AgentCommunicationTools(agentId).asTools())
     }
 
     val strategy = strategy("test") {

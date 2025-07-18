@@ -10,7 +10,7 @@ class Architect(name : String = "Architect Agent",
 ) : MASAIAgent(name, systemPrompt) {
 
     override fun toString(): String {
-        return "Architect(name='$name')"
+        return "Architect(name='$agentId')"
     }
 
 }
