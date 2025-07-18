@@ -13,16 +13,15 @@ import org.springframework.http.MediaType
 import org.springframework.stereotype.Component
 
 @Suppress("unused")
-@LLMDescription("Tools for communicating with other agents through their API endpoints.")
-@Component
+@LLMDescription("Tools for communicating with other agents through their API endpoints and getting their information.")
 class AgentCommunicationTools : ToolSet{
 
     private val serverURL: String = dotenv()["SPRING_SERVER_URL"]
 
-    @Autowired
     private  var restTemplate : RestTemplate = RestTemplateBuilder().build()
 
-    @LLMDescription("Get the details of all the agents from their agent cards.")
+    @Tool
+    @LLMDescription("Get the details of all the agents in the server.")
     fun getAgentDetails() : String{
         return try {
             val endpoint = "$serverURL/.well-known"
