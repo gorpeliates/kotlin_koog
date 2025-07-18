@@ -68,12 +68,4 @@ class AgentCommunicationTools : ToolSet{
         }
     }
 
-    @Tool
-    @LLMDescription("Get the ids of the other agents in the system.")
-    fun getOtherAgents(
-        @LLMDescription(description = "The ID of the agent requesting the information.")
-        agentName:String
-    ): List<String> {
-        return id_to_agents.toList()
-    }
 }

@@ -133,7 +133,28 @@ abstract class MASAIAgent (val name: String, val systemPrompt : String) {
         val nodeExecuteToolMultiple by nodeExecuteTool()
         val nodeSendToolResultMultiple by nodeLLMSendToolResult()
         val nodeCompressHistory by nodeLLMCompressHistory<ReceivedToolResult>()
-        val nodeStructuredData by node<String, String> { _ ->
+//        val nodeStructuredData by node<String, String> { _ ->
+//            val structuredResponse = llm.writeSession {
+//                this.requestLLMStructured(
+//                    structure = agentResponseStructure,
+//                    fixingModel = LLModel(
+//                        provider = LLMProvider.Ollama,
+//                        id = "llama3.2:3b",
+//                        capabilities = listOf(
+//                            LLMCapability.Completion, LLMCapability.Tools, LLMCapability.Embed,
+//                            LLMCapability.PromptCaching
+//                        )
+//                    )
+//                )
+//            }
+//
+//            """
+//            Response structure:
+//            $structuredResponse
+//            """.trimIndent()
+//        }
+
+        val nodeStructuredData by node<String, AgentResponse> { _ ->
             val structuredResponse = llm.writeSession {
                 this.requestLLMStructured(
                     structure = agentResponseStructure,
@@ -148,10 +169,7 @@ abstract class MASAIAgent (val name: String, val systemPrompt : String) {
                 )
             }
 
-            """
-            Response structure:
-            $structuredResponse
-            """.trimIndent()
+            structuredResponse.getOrNull()?.structure as AgentResponse
         }
         edge(nodeStart forwardTo nodeCallLLM)
 
