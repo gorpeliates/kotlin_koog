@@ -57,6 +57,7 @@ dependencies {
     // Micrometer tracing bridge
     implementation("io.micrometer:micrometer-tracing-bridge-otel:${micrometerTracingVersion}")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
+    implementation("ai.koog:koog-spring-boot-starter:0.3.0")
 
     testImplementation(kotlin("test"))
 }
