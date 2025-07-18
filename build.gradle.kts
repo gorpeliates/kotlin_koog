@@ -24,10 +24,6 @@ configurations.all {
         if (requested.group == "org.jetbrains.kotlinx" && requested.name.startsWith("kotlinx-coroutines")) {
             useVersion("1.10.2")
         }
-        // Force all OpenTelemetry dependencies to use the same version
-        if (requested.group == "io.opentelemetry") {
-            useVersion(openTelemetryVersion)
-        }
     }
 }
 

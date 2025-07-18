@@ -193,7 +193,7 @@ class AgentServer {
         )
     }
 
-    fun getAgent(agentId: Int) : MASAIAgentInter {
+    fun getAgent(agentId: Int) : MASAIAgent {
         return id_to_agents[agentId]!!
     }
 

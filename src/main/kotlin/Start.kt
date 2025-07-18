@@ -5,9 +5,10 @@ import roles.Engineer
 
 fun main(args: Array<String>) {
 
-    val companyAgent = Engineer("Company Agent")
+    val companyAgent = Engineer("Engineer Agent")
     runBlocking {
-        companyAgent.agent.run("Send a test message to the agent with url: http://localhost:8080/sendmessage/10004" )
+        println(companyAgent.agent.toolRegistry.tools.forEach { tool -> println(tool.descriptor) })
+        companyAgent.agent.run("Hello" )
     }
 
 }
