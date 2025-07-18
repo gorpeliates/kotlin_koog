@@ -12,14 +12,12 @@ import ai.koog.agents.core.dsl.extension.nodeLLMSendMultipleToolResults
 import ai.koog.agents.core.dsl.extension.onAssistantMessage
 import ai.koog.agents.core.dsl.extension.onMultipleToolCalls
 import ai.koog.agents.core.environment.ReceivedToolResult
-import ai.koog.agents.core.tools.Tool
 import ai.koog.agents.core.tools.ToolRegistry
-import ai.koog.agents.core.tools.ToolRegistry.Companion.invoke
 import ai.koog.agents.core.tools.reflect.asTools
 import ai.koog.agents.ext.tool.AskUser
 import ai.koog.agents.ext.tool.SayToUser
 import ai.koog.agents.features.eventHandler.feature.handleEvents
-import ai.koog.prompt.dsl.ModerationResult
+import ai.koog.agents.features.opentelemetry.feature.OpenTelemetry
 import ai.koog.prompt.dsl.prompt
 import ai.koog.prompt.executor.llms.all.simpleOllamaAIExecutor
 import ai.koog.prompt.executor.model.PromptExecutor
@@ -27,7 +25,9 @@ import ai.koog.prompt.llm.LLMCapability
 import ai.koog.prompt.llm.LLMProvider
 import ai.koog.prompt.llm.LLModel
 import io.github.cdimascio.dotenv.dotenv
-import io.lettuce.core.dynamic.output.OutputType
+import io.opentelemetry.exporter.otlp.http.trace.OtlpHttpSpanExporter
+import io.opentelemetry.exporter.otlp.trace.OtlpGrpcSpanExporter
+import io.opentelemetry.sdk.trace.samplers.Sampler
 import kotlinx.coroutines.runBlocking
 import tools.AgentCommunicationTools
 import kotlin.reflect.typeOf
@@ -117,29 +117,26 @@ abstract class MASAIAgent (val name: String, val systemPrompt : String){
         strategy = strategy,
         agentConfig = aiAgentConfig,
         toolRegistry = toolRegistry,
-    ) {
-         handleEvents {
-             onToolCall { eventContext ->
-                 println("Tool called: tool ${eventContext.tool.name}, args ${eventContext.toolArgs}")
-             }
+         installFeatures = {
+             install(OpenTelemetry) {
+                 setServiceInfo("koog-mas-agent", "1.0.0")
+                 setSampler(Sampler.alwaysOn())
+                 addSpanExporter(
+                     OtlpHttpSpanExporter.builder()
+                         .setEndpoint("http://localhost:4318/v1/traces")
+                         .build()
+                 )
 
-             onAgentRunError { eventContext ->
-                 println("An error occurred: ${eventContext.throwable.message}\n${eventContext.throwable.stackTraceToString()}")
-             }
-
-             onAgentFinished { eventContext ->
-                 println("Result: ${eventContext.result}")
              }
          }
-     }
-
+    )
 
 
     fun runAgent(msg:String): String {
 
         var response = ""
         runBlocking {
-            response = agent.run(msg).toString()
+            response = agent.run(msg)
         }
         return response
     }

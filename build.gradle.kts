@@ -1,6 +1,7 @@
 plugins {
-    kotlin("jvm") version "2.1.20"
+    kotlin("jvm") version "2.2.0"
     kotlin("plugin.spring") version "2.2.0"
+    kotlin("plugin.serialization") version "2.2.0"
     id("org.springframework.boot") version "3.5.3"
     id("io.spring.dependency-management") version "1.1.7"
 }
@@ -16,13 +17,16 @@ repositories {
 }
 
 val a2aSdkVersion = "0.2.3.Beta1"
-val openTelemetryVersion = "1.34.0"
-val micrometerTracingVersion = "1.5.2"
+val openTelemetryVersion = "1.49.0"
 
 configurations.all {
     resolutionStrategy.eachDependency {
         if (requested.group == "org.jetbrains.kotlinx" && requested.name.startsWith("kotlinx-coroutines")) {
             useVersion("1.10.2")
+        }
+        // Force compatible serialization version
+        if (requested.group == "org.jetbrains.kotlinx" && requested.name.startsWith("kotlinx-serialization")) {
+            useVersion("1.9.0")
         }
     }
 }
@@ -33,6 +37,9 @@ dependencies {
     // Kotlin coroutines
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2")
     //spring
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-core")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json")
+
     implementation("org.springframework.boot:spring-boot-starter")
     implementation("org.springframework.boot:spring-boot-starter-web")
 
@@ -55,7 +62,6 @@ dependencies {
     implementation("ch.qos.logback:logback-classic:1.5.13")
 
     // Micrometer tracing bridge
-    implementation("io.micrometer:micrometer-tracing-bridge-otel:${micrometerTracingVersion}")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
 
     testImplementation(kotlin("test"))
