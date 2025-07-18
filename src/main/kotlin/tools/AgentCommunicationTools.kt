@@ -4,18 +4,11 @@ import ai.koog.agents.core.tools.annotations.LLMDescription
 import ai.koog.agents.core.tools.annotations.Tool
 import ai.koog.agents.core.tools.reflect.ToolSet
 import io.github.cdimascio.dotenv.dotenv
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.web.client.RestTemplateBuilder
+    import org.springframework.boot.web.client.RestTemplateBuilder
 import org.springframework.web.client.RestTemplate
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
-import org.springframework.stereotype.Component
-import roles.Architect
-import roles.Engineer
-import roles.MASAIAgent
-import roles.ProductManager
-import roles.ProjectManager
 
 @Suppress("unused")
 @LLMDescription("Tools for communicating with other agents through their API endpoints and getting their information.")
@@ -25,7 +18,7 @@ class AgentCommunicationTools(agentId: String) : ToolSet{
 
     private  var restTemplate : RestTemplate = RestTemplateBuilder().build()
 
-    private val id_to_agents : Set<String> = setOf(
+    private val idToAgents : Set<String> = setOf(
         "engineer" ,
         "productManager" ,
         "projectManager" ,
@@ -47,7 +40,10 @@ class AgentCommunicationTools(agentId: String) : ToolSet{
     @Tool
     @LLMDescription("Sends a message to another agent via HTTP POST request")
     fun sendMessage(
-        @LLMDescription(description = "The URL endpoint for the chosen agent.")
+        @LLMDescription(
+            description = "The URL endpoint for the chosen agent. " +
+                    "The format is http://localhost:<port>/sendmessage/<agent_id>, you only need to provide the agent_id part as a parameter."
+        )
         agentEndpoint: String,
         @LLMDescription(description = "The message to be sent to the chosen agent.")
         message: String
@@ -61,7 +57,7 @@ class AgentCommunicationTools(agentId: String) : ToolSet{
             val requestBody = mapOf("sender" to this.name,"message" to message)
             val request = HttpEntity(requestBody, headers)
 
-            val response = restTemplate.postForObject(agentEndpoint, request, String::class.java )
+            val response = restTemplate.postForObject("$serverURL/sendmessage/$agentEndpoint", request, String::class.java )
             response ?: "No response received"
         } catch (e: Exception) {
             "Error sending message: ${e.message}"

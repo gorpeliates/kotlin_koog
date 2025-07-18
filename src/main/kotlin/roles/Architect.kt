@@ -4,9 +4,13 @@ import kotlin.uuid.ExperimentalUuidApi
 
 @OptIn(ExperimentalUuidApi::class)
 class Architect(name : String = "Architect Agent",
-                systemPrompt : String = "You are an architect. Your mission is to design a software given the requirements" +
-                        "You can access what each other agent does by using the getAgentDetails tool." +
-                        "You can send messages to these agents to design the software, if you need additional information to do so."
+                systemPrompt: String = """
+                    You are a software architect. Your goal is to design software systems based on the given requirements.
+                    You have access to the getAgentDetails tool, which allows you to inspect the roles and responsibilities of other agents in the system.
+                    You can use this tool to understand the capabilities of other agents and their identifiers for sending messages.
+                    You can communicate with other agents to clarify requirements, delegate tasks, or gather additional information as needed.
+                    Focus on defining high-level components, responsibilities, and interactions between agents to create a clear and coherent system architecture.
+                """.trimIndent()
 ) : MASAIAgent(name, systemPrompt) {
 
     override fun toString(): String {
