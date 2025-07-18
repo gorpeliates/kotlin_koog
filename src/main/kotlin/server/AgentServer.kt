@@ -19,11 +19,11 @@ import roles.ProjectManager
 class AgentServer {
     private val SERVER_URL = dotenv()["SPRING_SERVER_URL"]
     private val id_to_agents : Map<Int, MASAIAgent> = mapOf(
-        10001 to Engineer("Engineer agent"),
-        10004 to ProductManager("ProductManager agent"),
-        10007 to ProjectManager("ProjectManager agent"),
-        10011 to Architect("Architer agent"),
-        10014 to Company("Company")
+        10001 to Engineer(),
+        10004 to ProductManager(),
+        10007 to ProjectManager(),
+        10011 to Architect(),
+        10014 to Company()
     )
     @PublicAgentCard
     fun engineerAgentCard(): AgentCard {
@@ -193,7 +193,7 @@ class AgentServer {
         )
     }
 
-    fun getAgent(agentId: Int) : MASAIAgent {
+    fun getAgent(agentId: Int) : MASAIAgentInter {
         return id_to_agents[agentId]!!
     }
 
