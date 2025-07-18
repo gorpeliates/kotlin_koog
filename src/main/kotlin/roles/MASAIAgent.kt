@@ -21,7 +21,6 @@ import ai.koog.agents.ext.tool.SayToUser
 import ai.koog.agents.features.eventHandler.feature.handleEvents
 import ai.koog.prompt.dsl.ModerationResult
 import ai.koog.prompt.dsl.prompt
-import ai.koog.prompt.executor.llms.SingleLLMPromptExecutor
 import ai.koog.prompt.executor.llms.all.simpleOllamaAIExecutor
 import ai.koog.prompt.executor.model.PromptExecutor
 import ai.koog.prompt.llm.LLMCapability
@@ -30,7 +29,6 @@ import ai.koog.prompt.llm.LLModel
 import io.github.cdimascio.dotenv.dotenv
 import io.lettuce.core.dynamic.output.OutputType
 import kotlinx.coroutines.runBlocking
-import org.springframework.stereotype.Service
 import tools.AgentCommunicationTools
 import kotlin.reflect.typeOf
 import kotlin.uuid.ExperimentalUuidApi
@@ -42,8 +40,7 @@ abstract class MASAIAgent (val name: String, val systemPrompt : String){
 
 
     //    val executor: PromptExecutor = simpleOpenRouterExecutor(dotenv()["OPEN_ROUTER_API_KEY"])
-    abstract val executor: SingleLLMPromptExecutor
-
+    val executor: PromptExecutor = simpleOllamaAIExecutor(dotenv()["OLLAMA_HOST"])
     val toolRegistry = ToolRegistry {
         // Special tool, required with this type of agent.
         tool(AskUser)
