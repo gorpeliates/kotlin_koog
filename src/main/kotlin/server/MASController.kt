@@ -40,7 +40,6 @@ class MASController @Autowired constructor(
                 val agent = agentServer.getAgent(agentId)
                 val response : String = agent.runAgent(body["message"] as String)
 
-
                 return ResponseEntity(response, HttpStatus.OK)
             } catch (e : Exception) {
 

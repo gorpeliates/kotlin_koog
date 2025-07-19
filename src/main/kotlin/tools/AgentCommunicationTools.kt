@@ -4,7 +4,11 @@ import ai.koog.agents.core.tools.annotations.LLMDescription
 import ai.koog.agents.core.tools.annotations.Tool
 import ai.koog.agents.core.tools.reflect.ToolSet
 import io.github.cdimascio.dotenv.dotenv
-    import org.springframework.boot.web.client.RestTemplateBuilder
+import io.opentelemetry.api.GlobalOpenTelemetry
+import io.opentelemetry.api.trace.StatusCode
+import io.opentelemetry.api.trace.Tracer
+import io.opentelemetry.context.Context
+import org.springframework.boot.web.client.RestTemplateBuilder
 import org.springframework.web.client.RestTemplate
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
@@ -12,7 +16,7 @@ import org.springframework.http.MediaType
 
 @Suppress("unused")
 @LLMDescription("Tools for communicating with other agents through their API endpoints and getting their information.")
-class AgentCommunicationTools(agentId: String) : ToolSet{
+class AgentCommunicationTools(val agentId: String) : ToolSet{
 
     private val serverURL: String = dotenv()["SPRING_SERVER_URL"]
 
@@ -24,6 +28,8 @@ class AgentCommunicationTools(agentId: String) : ToolSet{
         "projectManager" ,
         "architect"
     ).filter { it != agentId }.toSet()
+
+    private val tracer: Tracer = GlobalOpenTelemetry.getTracer("koog-mas-agent", "1.0.0")
 
     @Tool
     @LLMDescription("Get the details of all the agents in the server.")
@@ -42,25 +48,54 @@ class AgentCommunicationTools(agentId: String) : ToolSet{
     fun sendMessage(
         @LLMDescription(
             description = "The URL endpoint for the chosen agent. " +
-                    "The format is http://localhost:<port>/sendmessage/<agent_id>, you only need to provide the agent_id part as a parameter."
+                    "You only need to provide the agent_id part as a parameter."
         )
-        agentEndpoint: String,
+        agentId: String,
         @LLMDescription(description = "The message to be sent to the chosen agent.")
         message: String
     ): String {
+        val span = tracer.spanBuilder("send-message").setParent(Context.current()).startSpan()
         return try {
+            span.setAttribute("agent.target.id", agentId)
+            span.setAttribute("agent.message.content", message)
+            span.setAttribute("agent.sender.id", this@AgentCommunicationTools.agentId)
+            span.setAttribute("agent.url", "$serverURL/sendmessage/$agentId")
+
             val headers = HttpHeaders().apply {
                 contentType = MediaType.APPLICATION_JSON
             }
 
-            println("Sending message with params: message: $message, agentEndpoint: $agentEndpoint")
+            println("Sending message with params: message: $message, agentEndpoint: $agentId")
             val requestBody = mapOf("sender" to this.name,"message" to message)
             val request = HttpEntity(requestBody, headers)
 
-            val response = restTemplate.postForObject("$serverURL/sendmessage/$agentEndpoint", request, String::class.java )
+            val response = restTemplate.postForObject("$serverURL/sendmessage/$agentId", request, String::class.java )
             response ?: "No response received"
         } catch (e: Exception) {
+            span.recordException(e)
+            span.setStatus(StatusCode.ERROR, "Exception occurred")
             "Error sending message: ${e.message}"
+        } finally {
+            span.end()
+        }
+    }
+
+    @Tool
+    @LLMDescription("Random number generator tool.")
+    fun generateRandomNumber(): String {
+        val span = tracer.spanBuilder("generate-random-number").setParent(Context.current()).startSpan()
+        return try {
+            val randomNumber = (1..100).random().toString()
+            span.setAttribute("agent.id", agentId)
+            span.setAttribute("random.number", randomNumber)
+            randomNumber
+
+        } catch (e : Exception) {
+            span.recordException(e)
+            span.setStatus(StatusCode.ERROR, "Exception occurred")
+            "Error generating random number: ${e.message}"
+        } finally {
+            span.end()
         }
     }
 
