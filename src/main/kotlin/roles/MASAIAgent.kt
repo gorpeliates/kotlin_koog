@@ -52,7 +52,7 @@ abstract class MASAIAgent (val agentId: String, val systemPrompt : String) {
                 LLMCapability.PromptCaching
             )
         ),
-        maxAgentIterations = 10
+        maxAgentIterations = 1000
     )
 
     val toolRegistry = ToolRegistry {
@@ -62,7 +62,7 @@ abstract class MASAIAgent (val agentId: String, val systemPrompt : String) {
         tools(AgentCommunicationTools(agentId).asTools())
     }
 
-    val strategy = strategy("SimpleStrategy") {
+    val strategy = strategy("$agentId strategy") {
 
         val nodeCallLLM by nodeLLMRequest()
         val executeToolCall by nodeExecuteTool()
@@ -85,7 +85,7 @@ abstract class MASAIAgent (val agentId: String, val systemPrompt : String) {
         toolRegistry = toolRegistry,
         installFeatures = {
             install(OpenTelemetry) {
-                setServiceInfo("koog-mas-agent", "1.0.0")
+                setServiceInfo("koog-mas-agent-${agentId}", "1.0.0")
                 setSampler(Sampler.alwaysOn())
                 addSpanExporter(
                     OtlpHttpSpanExporter.builder()

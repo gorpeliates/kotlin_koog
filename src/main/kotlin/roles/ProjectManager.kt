@@ -16,7 +16,7 @@ class ProjectManager(
         
         Ensure that the tasks are well-scoped, feasible, and aligned with the overall project objectives and timelines.
     """.trimIndent()
-) : MASAIAgent(name, systemPrompt) {
+) : MASAIAgent("projectmanager", systemPrompt) {
 
     override fun toString(): String {
         return "ProjectManager(name='$agentId')"

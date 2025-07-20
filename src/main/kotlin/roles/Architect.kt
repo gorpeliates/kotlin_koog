@@ -11,7 +11,7 @@ class Architect(name : String = "Architect Agent",
                     You can communicate with other agents to clarify requirements, delegate tasks, or gather additional information as eeded.
                     Focus on defining high-level components, responsibilities, and interactions between agents to create a clear and coherent system architecture.
                 """.trimIndent()
-) : MASAIAgent(name, systemPrompt) {
+) : MASAIAgent("architect", systemPrompt) {
 
     override fun toString(): String {
         return "Architect(name='$agentId')"

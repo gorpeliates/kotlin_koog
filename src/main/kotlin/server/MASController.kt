@@ -32,10 +32,6 @@ class MASController @Autowired constructor(
     ): ResponseEntity<String?> {
 
             try {
-                val requestId = MDC.get("requestId") ?: "N/A"
-                val logMessage = "[$requestId] [$applicationName] Sending message to agent $agentId: ${body["message"]}"
-
-                logger.info(logMessage)
 
                 val agent = agentServer.getAgent(agentId)
                 val response : String = agent.runAgent(body["message"] as String)
@@ -49,15 +45,14 @@ class MASController @Autowired constructor(
             }
     }
 
-    @GetMapping("/.well-known")
+    @PostMapping("/.well-known")
     @ResponseBody
-    fun agentCards() : ResponseEntity<List<AgentCard>> {
+    fun agentCards(@RequestBody requestingParty: String) : ResponseEntity<List<AgentCard>> {
 
         try {
             val response = AgentServer().getAllAgentCards()
-            val requestId = MDC.get("requestId") ?: "N/A"
 
-            logger.info("[$requestId] [$applicationName] Incoming request to /.well-known - Response: $response")
+            logger.info("[$requestingParty] requested agent cards at ./well-known - Response: $response")
 
             return ResponseEntity(response, HttpStatus.OK)
 

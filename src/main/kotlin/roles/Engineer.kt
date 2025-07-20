@@ -14,7 +14,7 @@ class Engineer(
         
         Focus on writing clean, efficient, and correct code to fulfill your assigned tasks.
     """.trimIndent()
-) : MASAIAgent(name, systemPrompt) {
+) : MASAIAgent("engineer", systemPrompt) {
     override fun toString(): String {
         return "Engineer(name='$agentId')"
     }

@@ -26,17 +26,26 @@ class AgentCommunicationTools(val agentId: String) : ToolSet{
         "architect"
     ).filter { it != agentId }.toSet()
 
-    @Tool
-    @LLMDescription("Get the details of all the agents in the server.")
-    fun getAgentDetails() : String{
-        return try {
-            val endpoint = "$serverURL/.well-known"
-            val response = restTemplate.getForObject(endpoint, String::class.java)
-            response
-        } catch (e: Exception) {
-            println("Error retrieving agent cards: ${e.message}")
-        } as String
-    }
+  @Tool
+  @LLMDescription("Get the details of all the agents in the server.")
+  fun getAgentDetails(
+      @LLMDescription("Your ID as the requesting party, used for logging purposes.")
+      requestingParty: String
+  ): String {
+      return try {
+          val headers = HttpHeaders().apply {
+              contentType = MediaType.APPLICATION_JSON
+          }
+          val requestBody = mapOf("requestingParty" to requestingParty)
+          val request = HttpEntity(requestBody, headers)
+
+          val endpoint = "$serverURL/.well-known"
+          val response = restTemplate.postForObject(endpoint, request, String::class.java)
+          response ?: "No response received"
+      } catch (e: Exception) {
+          "Error retrieving agent cards: ${e.message}"
+      }
+  }
 
     @Tool
     @LLMDescription("Sends a message to another agent via HTTP POST request")
@@ -50,13 +59,9 @@ class AgentCommunicationTools(val agentId: String) : ToolSet{
         message: String
     ): String {
         return try {
-
-
             val headers = HttpHeaders().apply {
                 contentType = MediaType.APPLICATION_JSON
             }
-
-            println("Sending message with params: message: $message, agentEndpoint: $agentId")
             val requestBody = mapOf("sender" to this.name,"message" to message)
             val request = HttpEntity(requestBody, headers)
 

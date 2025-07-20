@@ -30,8 +30,8 @@ class AgentServer {
     @PublicAgentCard
     fun engineerAgentCard(): AgentCard {
         return AgentCard.Builder()
-            .name("Engineer Agent")
-            .description("Responsible for writing code ")
+            .name("engineer")
+            .description("Responsible for writing efficient code.")
             .url("http://localhost:$SERVER_URL/sendmessage/engineer")
             .version("1.0.0")
             .capabilities(
@@ -58,7 +58,7 @@ class AgentServer {
     @PublicAgentCard
     fun productManagerAgentCard(): AgentCard {
         return AgentCard.Builder()
-            .name("Product Manager Agent")
+            .name("productmanager")
             .description("Responsible for product strategy and roadmap planning")
             .url("http://localhost:$SERVER_URL/sendmessage/productmanager")
             .version("1.0.0")
@@ -92,7 +92,7 @@ class AgentServer {
     @PublicAgentCard
     fun projectManagerAgentCard(): AgentCard {
         return AgentCard.Builder()
-            .name("Project Manager Agent")
+            .name("projectmanager")
             .description("Responsible for project coordination and team management")
             .url("http://localhost:$SERVER_URL/sendmessage/projectmanager")
             .version("1.0.0")
@@ -127,7 +127,7 @@ class AgentServer {
     @PublicAgentCard
     fun architectAgentCard(): AgentCard {
         return AgentCard.Builder()
-            .name("Architect Agent")
+            .name("architect")
             .description("Responsible for designing the software ")
             .url("http://localhost:$SERVER_URL/sendmessage/architect")
             .version("1.0.0")
@@ -191,7 +191,6 @@ class AgentServer {
             projectManagerAgentCard(),
             architectAgentCard(),
             orchestratorAgentCard()
-
         )
     }
 

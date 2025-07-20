@@ -15,7 +15,7 @@ class Orchestrator(
         
         Communicate with the relevant agents to delegate tasks, gather updates, and manage dependencies effectively.
     """.trimIndent()
-) : MASAIAgent(name, systemPrompt) {
+) : MASAIAgent("orchestrator", systemPrompt) {
 
     override fun toString(): String {
         return "Orchestrator(name='$agentId')"
@@ -26,7 +26,7 @@ class Orchestrator(
      */
     fun startTask(task: String): String {
         return runBlocking {
-            agent.run(task).toString()
+            agent.run(task)
         }
     }
 }

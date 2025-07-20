@@ -18,7 +18,7 @@ class ProductManager(
         
         Ensure that the product requirements are aligned with both business goals and technical feasibility.
     """.trimIndent()
-) : MASAIAgent(name, systemPrompt) {
+) : MASAIAgent("productmanager", systemPrompt) {
     override fun toString(): String {
         return "ProductManager(name='$agentId')"
     }
