@@ -5,7 +5,18 @@
             <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger -- %msg%n</pattern>
         </encoder>
     </appender>
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>INFO</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger -- %msg%n</pattern>
+        </encoder>
+    </appender>
     <root level="DEBUG">
         <appender-ref ref="FILE" />
+        <appender-ref ref="CONSOLE" />
     </root>
 </configuration>
