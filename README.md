@@ -13,6 +13,6 @@
 ### Viewing Traces
 
 Once the application is running, you can view the traces in the Jaeger UI at 
-the following link as a json file:
+the following link:
 
-[http://localhost:16686/api/traces?service=koog_otel_mas](http://localhost:16686/api/traces?service=koog_otel_mas)
+[http://localhost:16686/](http://localhost:16686/api/traces?service=koog_otel_mas)
