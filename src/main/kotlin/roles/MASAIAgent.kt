@@ -16,9 +16,11 @@ import ai.koog.agents.core.tools.ToolRegistry
 import ai.koog.agents.core.tools.reflect.asTools
 import ai.koog.agents.ext.tool.AskUser
 import ai.koog.agents.ext.tool.SayToUser
+import ai.koog.agents.features.eventHandler.feature.handleEvents
 import ai.koog.agents.features.opentelemetry.feature.OpenTelemetry
 import ai.koog.prompt.dsl.prompt
 import ai.koog.prompt.executor.llms.all.simpleOllamaAIExecutor
+import ai.koog.prompt.executor.llms.all.simpleOpenRouterExecutor
 import ai.koog.prompt.executor.model.PromptExecutor
 import ai.koog.prompt.llm.LLMCapability
 import ai.koog.prompt.llm.LLMProvider
@@ -35,8 +37,37 @@ import kotlin.uuid.ExperimentalUuidApi
 abstract class MASAIAgent (val agentId: String, val systemPrompt : String) {
     private val MAX_TOKENS_THRESHOLD = 10000
 
+//    val executor: PromptExecutor = simpleOllamaAIExecutor(dotenv()["OLLAMA_HOST"])
+//val aiAgentConfig = AIAgentConfig(
+//    prompt = prompt("test") {
+//        system(systemPrompt)
+//    },
+//    model = LLModel(
+//        provider = LLMProvider.Ollama,
+//        id = "llama3.2:3b",
+//        capabilities = listOf(
+//            LLMCapability.Completion, LLMCapability.Tools, LLMCapability.Embed,
+//            LLMCapability.PromptCaching
+//        )
+//    ),
+//    maxAgentIterations = 10
+//)
+    val executor : PromptExecutor = simpleOpenRouterExecutor(dotenv()["OPEN_ROUTER_API_KEY_2"])
 
-    val executor: PromptExecutor = simpleOllamaAIExecutor(dotenv()["OLLAMA_HOST"])
+    val aiAgentConfig = AIAgentConfig(
+        prompt = prompt("test") {
+            system(systemPrompt)
+        },
+        model = LLModel(
+            provider = LLMProvider.OpenRouter,
+            id = "deepseek/deepseek-chat-v3-0324:free",
+            capabilities = listOf(
+                LLMCapability.Completion, LLMCapability.Tools, LLMCapability.Embed,
+                LLMCapability.PromptCaching
+            )
+        ),
+        maxAgentIterations = 10
+    )
 
     val toolRegistry = ToolRegistry {
         // Special tool, required with this type of agent.
@@ -60,20 +91,7 @@ abstract class MASAIAgent (val agentId: String, val systemPrompt : String) {
     }
 
 
-    val aiAgentConfig = AIAgentConfig(
-        prompt = prompt("test") {
-            system(systemPrompt)
-        },
-        model = LLModel(
-            provider = LLMProvider.Ollama,
-            id = "llama3.2:3b",
-            capabilities = listOf(
-                LLMCapability.Completion, LLMCapability.Tools, LLMCapability.Embed,
-                LLMCapability.PromptCaching
-            )
-        ),
-        maxAgentIterations = 10
-    )
+
 
     val agent = AIAgent(
         inputType = typeOf<String>(),
@@ -91,7 +109,7 @@ abstract class MASAIAgent (val agentId: String, val systemPrompt : String) {
                         .setEndpoint("http://localhost:4318/v1/traces")
                         .build()
                 )
-
+                setVerbose(true)
             }
         }
     )

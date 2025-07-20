@@ -7,7 +7,7 @@ fun main(args: Array<String>) {
     val companyAgent = Engineer("Engineer Agent")
     runBlocking {
         println(companyAgent.agent.toolRegistry.tools.forEach { tool -> println(tool.descriptor) })
-        companyAgent.agent.run("You must always use a tool. Do not respond with a regular message. If no tool fits, return a default tool call with empty parameters" )
+        companyAgent.agent.run("Use your tool to create a random number. Always use a tool." )
     }
 
 }

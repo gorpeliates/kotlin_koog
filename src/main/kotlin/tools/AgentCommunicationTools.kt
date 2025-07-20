@@ -84,6 +84,7 @@ class AgentCommunicationTools(val agentId: String) : ToolSet{
     @LLMDescription("Random number generator tool.")
     fun generateRandomNumber(): String {
         val span = tracer.spanBuilder("generate-random-number").setParent(Context.current()).startSpan()
+
         return try {
             val randomNumber = (1..100).random().toString()
             span.setAttribute("agent.id", agentId)
