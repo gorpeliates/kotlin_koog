@@ -64,8 +64,6 @@ class AgentCommunicationTools(val agentId: String) : ToolSet{
             response ?: "No response received"
         } catch (e: Exception) {
             "Error sending message: ${e.message}"
-        } finally {
-            span.end()
         }
     }
 
@@ -81,8 +79,6 @@ class AgentCommunicationTools(val agentId: String) : ToolSet{
 
         } catch (e : Exception) {
             "Error generating random number: ${e.message}"
-        } finally {
-            span.end()
         }
     }
 
