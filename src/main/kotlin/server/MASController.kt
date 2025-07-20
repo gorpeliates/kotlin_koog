@@ -30,7 +30,6 @@ class MASController @Autowired constructor(
             @PathVariable("agentId") agentId: String,
             @RequestBody body: Map<String, String>
     ): ResponseEntity<String?> {
-
             try {
 
                 val agent = agentServer.getAgent(agentId)
