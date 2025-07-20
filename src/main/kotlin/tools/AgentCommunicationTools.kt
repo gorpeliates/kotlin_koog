@@ -5,9 +5,6 @@ import ai.koog.agents.core.tools.annotations.Tool
 import ai.koog.agents.core.tools.reflect.ToolSet
 import io.github.cdimascio.dotenv.dotenv
 import io.opentelemetry.api.GlobalOpenTelemetry
-import io.opentelemetry.api.trace.StatusCode
-import io.opentelemetry.api.trace.Tracer
-import io.opentelemetry.context.Context
 import org.springframework.boot.web.client.RestTemplateBuilder
 import org.springframework.web.client.RestTemplate
 import org.springframework.http.HttpEntity
@@ -28,8 +25,6 @@ class AgentCommunicationTools(val agentId: String) : ToolSet{
         "projectManager" ,
         "architect"
     ).filter { it != agentId }.toSet()
-
-    private val tracer: Tracer = GlobalOpenTelemetry.getTracer("koog-mas-agent", "1.0.0")
 
     @Tool
     @LLMDescription("Get the details of all the agents in the server.")
@@ -54,12 +49,8 @@ class AgentCommunicationTools(val agentId: String) : ToolSet{
         @LLMDescription(description = "The message to be sent to the chosen agent.")
         message: String
     ): String {
-        val span = tracer.spanBuilder("send-message").setParent(Context.current()).startSpan()
         return try {
-            span.setAttribute("agent.target.id", agentId)
-            span.setAttribute("agent.message.content", message)
-            span.setAttribute("agent.sender.id", this@AgentCommunicationTools.agentId)
-            span.setAttribute("agent.url", "$serverURL/sendmessage/$agentId")
+
 
             val headers = HttpHeaders().apply {
                 contentType = MediaType.APPLICATION_JSON
@@ -72,8 +63,6 @@ class AgentCommunicationTools(val agentId: String) : ToolSet{
             val response = restTemplate.postForObject("$serverURL/sendmessage/$agentId", request, String::class.java )
             response ?: "No response received"
         } catch (e: Exception) {
-            span.recordException(e)
-            span.setStatus(StatusCode.ERROR, "Exception occurred")
             "Error sending message: ${e.message}"
         } finally {
             span.end()
@@ -83,7 +72,6 @@ class AgentCommunicationTools(val agentId: String) : ToolSet{
     @Tool
     @LLMDescription("Random number generator tool.")
     fun generateRandomNumber(): String {
-        val span = tracer.spanBuilder("generate-random-number").setParent(Context.current()).startSpan()
 
         return try {
             val randomNumber = (1..100).random().toString()
@@ -92,8 +80,6 @@ class AgentCommunicationTools(val agentId: String) : ToolSet{
             randomNumber
 
         } catch (e : Exception) {
-            span.recordException(e)
-            span.setStatus(StatusCode.ERROR, "Exception occurred")
             "Error generating random number: ${e.message}"
         } finally {
             span.end()
