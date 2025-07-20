@@ -73,8 +73,6 @@ class AgentCommunicationTools(val agentId: String) : ToolSet{
 
         return try {
             val randomNumber = (1..100).random().toString()
-            span.setAttribute("agent.id", agentId)
-            span.setAttribute("random.number", randomNumber)
             randomNumber
 
         } catch (e : Exception) {
