@@ -12,7 +12,7 @@ import roles.Orchestrator
 import roles.Engineer
 import roles.MASAIAgent
 import roles.ProductManager
-import roles.ProjectManager
+import roles.Tester
 
 @Scope("prototype")
 @Component
@@ -22,7 +22,7 @@ class AgentServer {
     private final val map : Map<String, MASAIAgent> = mapOf(
         "engineer" to Engineer(),
         "productmanager" to ProductManager(),
-        "projectmanager" to ProjectManager(),
+        "tester" to Tester(),
         "architect" to Architect()
     )
 
@@ -90,11 +90,11 @@ class AgentServer {
             .build()
     }
     @PublicAgentCard
-    fun projectManagerAgentCard(): AgentCard {
+    fun testerAgentCard(): AgentCard {
         return AgentCard.Builder()
-            .name("projectmanager")
-            .description("Responsible for project coordination and team management")
-            .url("http://localhost:$SERVER_URL/sendmessage/projectmanager")
+            .name("tester")
+            .description("Responsible for testing the software and ensuring its quality.")
+            .url("http://localhost:$SERVER_URL/sendmessage/tester")
             .version("1.0.0")
             .capabilities(
                 AgentCapabilities.Builder()
@@ -108,16 +108,16 @@ class AgentServer {
             .skills(
                 mutableListOf<AgentSkill?>(
                     AgentSkill.Builder()
-                        .id("project_planning")
-                        .name("Project Planning")
-                        .description("Creates detailed project plans and timelines.")
-                        .tags(mutableListOf<String?>("planning", "scheduling", "coordination"))
+                        .id("code_quality")
+                        .name("Code Quality Assurance")
+                        .description("Outlines the improvements needed in the code to ensure code quality standards.")
+                        .tags(mutableListOf<String?>("code", "quality", "review"))
                         .build(),
                     AgentSkill.Builder()
-                        .id("resource_management")
-                        .name("Resource Management")
-                        .description("Manages team resources and task allocation.")
-                        .tags(mutableListOf<String?>("resources", "allocation", "management"))
+                        .id("unit_testing")
+                        .name("Unit Testing")
+                        .description("Writes a list of unit tests to ensure the software works as intended.")
+                        .tags(mutableListOf<String?>("code", "unit test", "testing"))
                         .build()
                 )
             )
@@ -188,7 +188,7 @@ class AgentServer {
         return arrayListOf(
             engineerAgentCard(),
             productManagerAgentCard(),
-            projectManagerAgentCard(),
+            testerAgentCard(),
             architectAgentCard(),
             orchestratorAgentCard()
         )

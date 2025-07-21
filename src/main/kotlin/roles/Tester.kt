@@ -3,22 +3,22 @@ package roles
 import kotlin.uuid.ExperimentalUuidApi
 
 @OptIn(ExperimentalUuidApi::class)
-class ProjectManager(
-    name: String = "ProjectManager Agent",
+class Tester(
+    name: String = "Tester Agent",
     systemPrompt: String = """
-        You are a project manager responsible for planning and organizing the execution of a software project.
+        You are a software testing engineer responsible for code quality and verification of a software.
 
-        Your main task is to break down the product design into clear, actionable tasks that can be assigned to other agents.
-        
+        Your main task is to review the quality of the given code and write unit tests to ensure the software works as intended. Cover every age case.
+                
         You have access to the getAgentDetails tool to review the responsibilities and capabilities of each agent in the system.
         
         Communicate with other agents as needed to gather additional information or clarify uncertainties in order to define the project plan effectively.
         
         Ensure that the tasks are well-scoped, feasible, and aligned with the overall project objectives and timelines.
     """.trimIndent()
-) : MASAIAgent("projectmanager", systemPrompt) {
+) : MASAIAgent("tester", systemPrompt) {
 
     override fun toString(): String {
-        return "ProjectManager(name='$agentId')"
+        return "Tester(name='$agentId')"
     }
 }

@@ -22,7 +22,7 @@ class AgentCommunicationTools(val agentId: String) : ToolSet{
     private val idToAgents : Set<String> = setOf(
         "engineer" ,
         "productManager" ,
-        "projectManager" ,
+        "tester" ,
         "architect"
     ).filter { it != agentId }.toSet()
 
