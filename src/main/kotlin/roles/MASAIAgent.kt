@@ -57,7 +57,6 @@ abstract class MASAIAgent (val agentId: String, val systemPrompt : String) {
 
     val toolRegistry = ToolRegistry {
         // Special tool, required with this type of agent.
-        tool(AskUser)
         tool(SayToUser)
         tools(AgentCommunicationTools(agentId).asTools())
     }
