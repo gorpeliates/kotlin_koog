@@ -1,5 +1,7 @@
 package roles
 
+import FileSpanExporter
+import JsonFileSpanExporter
 import ai.koog.agents.core.agent.AIAgent
 import ai.koog.agents.core.agent.config.AIAgentConfig
 import ai.koog.agents.core.dsl.builder.forwardTo
@@ -29,9 +31,11 @@ import ai.koog.prompt.llm.LLMProvider
 import ai.koog.prompt.llm.LLModel
 import io.github.cdimascio.dotenv.dotenv
 import io.opentelemetry.exporter.otlp.http.trace.OtlpHttpSpanExporter
+import io.opentelemetry.exporter.otlp.trace.OtlpGrpcSpanExporter
 import io.opentelemetry.sdk.trace.samplers.Sampler
 import kotlinx.coroutines.runBlocking
 import tools.AgentCommunicationTools
+import java.io.File
 import kotlin.reflect.typeOf
 import kotlin.uuid.ExperimentalUuidApi
 
@@ -91,6 +95,9 @@ abstract class MASAIAgent (val agentId: String, val systemPrompt : String) {
                     OtlpHttpSpanExporter.builder()
                         .setEndpoint("http://localhost:4318/v1/traces")
                         .build()
+                )
+                addSpanExporter(
+                    JsonFileSpanExporter(File("logs/spans.json"))
                 )
                 setVerbose(true)
             }
